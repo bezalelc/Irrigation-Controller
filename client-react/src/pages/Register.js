@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'
-import { useFirebase } from "../FirebaseContext";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { faGoogle, faFacebook } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useFirebase } from "../FirebaseContext";
 
-const Login = () => {
+const Register = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const { userId, firebaseAuth } = useFirebase()
@@ -14,13 +14,11 @@ const Login = () => {
     useEffect(() => {
         if (userId) {
             navigate('/home')
-        } else {
-            navigate('/');
         }
     }, [userId, navigate]);
 
     const loginWithEmailPasswordHandler = () => {
-        signInWithEmailAndPassword(firebaseAuth, email, password)
+        createUserWithEmailAndPassword(firebaseAuth, email, password)
             .then(() => {
             })
             .catch((error) => {
@@ -54,14 +52,13 @@ const Login = () => {
     return (
         <div className="login-container" >
             <form className="login-form" onSubmit={(e) => e.preventDefault()}>
-                <h1>Login</h1>
+                <h1>Register</h1>
                 <label htmlFor="email" className="login-label">Email</label>
                 <input type="email" className="login-input" placeholder="youremail@mail.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
                 <label htmlFor="password" className="login-label">Password</label>
                 <input type="password" className="login-input" placeholder="********" value={password} onChange={(event) => setPassword(event.target.value)} required />
-                <button onClick={() => navigate('/forgotPassword')}>Forgot password?</button>
-                <button type="submit" className="login-button" onClick={loginWithEmailPasswordHandler}>Login</button>
-                <button onClick={() => navigate('/register')}>don't have an account yet? register</button>
+                <button type="submit" className="login-button" onClick={loginWithEmailPasswordHandler}>Register</button>
+                <button onClick={() => navigate('/')}>already have an account? login</button>
                 <div className="login-social">
                     <button className="login-social-google" onClick={loginWithGoogleHandler}><FontAwesomeIcon icon={faGoogle} /></button>
                     <button className="login-social-facebook"><FontAwesomeIcon icon={faFacebook} className="login-social-facebook-icon" /></button>
@@ -71,4 +68,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default Register;
