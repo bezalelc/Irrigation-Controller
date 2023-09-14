@@ -1,18 +1,20 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FirebaseProvider } from './FirebaseContext';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Home from './pages/Home';
-import Setting from './pages/Setting';
+import Navbar from './navbar/Navbar';
+import Login from './loginRegister/Login';
+import Register from './loginRegister/Register';
+import ForgotPassword from './loginRegister/ForgotPassword';
 import PrivateRoute from './pages/PrivateRoute'
-import ForgotPassword from './pages/ForgotPassword';
-import './App.css';
+import Home from './home/Home';
+import Setting from './setting/Setting';
+import Config from './config/Config';
+import './App.scss';
 
 function App() {
   return (
     <FirebaseProvider>
       <BrowserRouter>
+        <img src="/resources/gif/drop.gif" alt="" id="background-gif"></img>
         <Navbar />
         <Routes>
           <Route path='/' element={<Login />} />
@@ -20,6 +22,7 @@ function App() {
           <Route exact path='/forgotPassword' element={<ForgotPassword />} />
           <Route exact path="/home" element={<PrivateRoute component={Home} />} />
           <Route exact path="/setting" element={<PrivateRoute component={Setting} />} />
+          <Route exact path="/config" element={<PrivateRoute component={Config} />} />
         </Routes>
       </BrowserRouter>
     </FirebaseProvider>

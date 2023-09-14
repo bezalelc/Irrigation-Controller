@@ -1,0 +1,83 @@
+:root {
+    --color1: red;
+    --color2: rgb(111, 200, 73);
+    --color3: rgb(17, 0, 255);
+}
+
+@keyframes blink {
+    0% {
+        background-color: #ff0000;
+        /* Initial background color */
+    }
+
+    50% {
+        background-color: #00ff00;
+        /* Color change halfway through */
+    }
+
+    100% {
+        background-color: #ff0000;
+        /* Return to initial background color */
+    }
+}
+
+.container {
+    // display: flex;
+    // flex-direction: column;
+    // width: 20%;
+    // display: flex;
+    // flex-direction: column;
+    // justify-self: center;
+    // animation: blink 2s infinite;
+}
+
+.svg {
+    position: relative;
+    display: inline-block;
+}
+
+
+.background {
+    fill: none;
+    stroke: #ddd;
+}
+
+.progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: none;
+
+
+    // stroke: var(--color1);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    // &::-webkit-slider-thumb,
+    // &::-moz-range-thumb {
+    //     // appearance: none;
+    //     // width: 30px;
+    //     // height: 30px;
+    //     // background-color: #00ff00;
+    //     // color: #ff0000;
+    //     border: 2px solid #007bff; /* Thumb border */
+    //     width: 20px; /* Thumb width */
+    //     height: 20px; /* Thumb height */
+    //     border-radius: 50%; /* Rounded thumb */
+    //     cursor: pointer; /* Change cursor on hover */
+    // }
+}
+
+.text {
+    font-size: 2.5rem;
+    font-weight: 500;
+    font-style: italic;
+}
+
+// .input {
+//     // appearance: none;
+//     height: 10px;
+//     height: 7px;
+//     background-image: linear-gradient(to right, var(--color1), var(--color2), var(--color3));
+//     border-radius: 5px;
+// }

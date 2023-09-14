@@ -1,0 +1,109 @@
+@import '../globals.scss';
+
+.container {
+    // border: 1px solid gray;
+    border-radius: 20px;
+    margin-top: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 5px;
+    display: flex;
+    // flex-direction: column;
+}
+
+.setting {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 40px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+
+
+    background-color: rgba(57, 108, 102, 0.179);
+    // backdrop-filter: blur(5px);
+    // box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+    // border: 2px solid rgb(139, 194, 236);
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    .setNameContainer {
+        position: relative;
+        display: inline-block;
+
+        input {
+            font-size: 1.8rem;
+            background-color: rgba(0, 0, 0, 0);
+            font-weight: 600;
+            padding-left: 37px;
+
+            border: none;
+
+            &:focus {
+                outline: none;
+                border: none;
+            }
+
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
+                -webkit-background-clip: text;
+                transition: background-color 5000s ease-in-out 0s;
+                box-shadow: inset 0 0 20px 20px rgba(0, 0, 0, 0);
+            }
+
+            @include phone {
+                font-size: 1rem;
+            }
+        }
+
+        .icon {
+            font-size: 23px;
+            font-weight: 300;
+            position: absolute;
+            top: 45%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.89);
+        }
+    }
+
+    .addPlan {
+        // flex-flow: row;
+    }
+}
+
+.switchContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.manualButton {
+    //     width: 150px;
+    //     height: 150px;
+    //     border-radius: 50%;
+    //     background-color: #007bff;
+    //     color: black;
+    //     text-align: center;
+    //     line-height: 100px;
+    //     font-size: 30px;
+    //     cursor: pointer;
+
+    //     :hover {
+    //         background: linear-gradient(to bottom, #a2cea4, #4CAF50);
+    //         box-shadow: 0px 3px 0px 0px #8e4e3e;
+    //     }
+    // }
+
+    // .manualButtonOpen {
+    //     background-color: #ff0000;
+}

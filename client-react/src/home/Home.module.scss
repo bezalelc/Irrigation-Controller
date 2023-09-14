@@ -1,0 +1,85 @@
+@import '../globals.scss';
+
+.container {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    background-color: rgba(102, 198, 185, 0.379);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    border: 2px solid rgb(139, 194, 236);
+    border-radius: 20px;
+
+    font-size: 30px;
+    font-weight: 400;
+    // display: none;
+    // width: 100%;
+}
+
+.tabs {
+    margin-top: 0;
+    // background-color: rgba(247, 151, 138, 0.751);
+}
+
+.selectedTabs {
+    background-color: #007bff;
+    /* Change to your preferred background color */
+    color: #fff;
+    /* Change to your preferred text color */
+    border: 2px solid #007bff;
+    /* Change to your preferred border color */
+    border-bottom: none;
+    /* Remove the bottom border */
+    border-radius: 5px 5px 0 0;
+}
+
+// .Home_tab__2XgF9{
+//         background-color: aqua;
+//         border: none;
+// }
+
+.tabList {
+    margin-top: 0;
+    margin-bottom: 0;
+
+}
+
+.tab {
+    font-size: 30px;
+    font-weight: 500;
+    transition: transform 0.5s, background-color 0.5s;
+
+    &:hover {
+        transform: scale(1.05);
+        background-color: rgba(102, 198, 185, 0.8);
+    }
+
+}
+
+.selectedTab {
+    border-bottom: 4px solid gray;
+    background-color: rgba(132, 158, 116, 0.466);
+    border-radius: 5px;
+}
+
+// .react-tabs__tab--selected {
+//     color: #0099ff;
+//     border: 1px solid #0099ff;
+//     // border-bottom: none; /* Updated line */
+//     &:focus {
+//         border: none;
+
+//         &::after {
+//             border: none;
+//         }
+//     }
+// }
+
+// .tabPanel {
+//     // background-color: rgba(42, 46, 165, 0.859);
+// }

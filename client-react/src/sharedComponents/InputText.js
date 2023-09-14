@@ -1,0 +1,1 @@
+import style from './InputText.module.scss'

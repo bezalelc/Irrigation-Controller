@@ -1,0 +1,89 @@
+@import '../globals.scss';
+
+.container {
+
+    margin-top: 50px;
+    margin-bottom: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+
+
+    background-color: rgba(102, 198, 185, 0.379);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    border: 2px solid rgb(139, 194, 236);
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    // align-self: center;
+    // justify-self: center;
+    // width: 40%;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 600;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.valueContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    // background-color: aqua;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.label {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.rightSideContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.button {
+    font-size: 1.6rem;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 20px;
+    background: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-left: 30px;
+
+    transition: transform 0.5s, background-color 0.5s;
+    border-radius: 15px;
+
+    &:hover {
+        transform: scale(1.03);
+        background-color: rgba(102, 198, 185, 0.2);
+    }
+
+    @include phone {
+        font-size: 1.3rem;
+        padding-top: 5px;
+    }
+}
+
+.separator {
+    width: 100%;
+    height: 1px;
+    background-color: #948a8a;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
