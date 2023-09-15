@@ -6,29 +6,69 @@
 
 @keyframes blink {
     0% {
-        background-color: #ff0000;
+        background-color: rgba(248, 248, 248, 0);
         /* Initial background color */
     }
 
+    // 10% {
+    //     background-color: rgba(157, 33, 33, 0.1);
+    //     /* Color change halfway through */
+    // }
+
+    // 20% {
+    //     background-color: rgba(248, 248, 248, 0.1);
+    //     /* Color change halfway through */
+    // }
+
+    // 30% {
+    //     background-color: rgba(248, 248, 248, 0.15);
+    //     /* Color change halfway through */
+    // }
+
+    // 40% {
+    //     background-color: rgba(248, 248, 248, 0.2);
+    //     /* Color change halfway through */
+    // }
+
     50% {
-        background-color: #00ff00;
+        background-color: rgba(157, 33, 33, 0.6);
         /* Color change halfway through */
     }
 
+    // 50% {
+    //     background-color: rgba(248, 248, 248, 0.3);
+    //     /* Color change halfway through */
+    // }
+
+    // 60% {
+    //     background-color: rgba(248, 248, 248, 0.35);
+    //     /* Color change halfway through */
+    // }
+
+    // 70% {
+    //     background-color: rgba(248, 248, 248, 0.4);
+    //     /* Color change halfway through */
+    // }
+
+    // 80% {
+    //     background-color: rgba(248, 248, 248, 0.3);
+    //     /* Color change halfway through */
+    // }
+
+    // 90% {
+    //     background-color: rgba(248, 248, 248, 0.3);
+    //     /* Color change halfway through */
+    // }
+
     100% {
-        background-color: #ff0000;
+        background-color: rgba(157, 33, 33, 0.3);
         /* Return to initial background color */
     }
 }
 
 .container {
-    // display: flex;
-    // flex-direction: column;
-    // width: 20%;
-    // display: flex;
-    // flex-direction: column;
-    // justify-self: center;
-    // animation: blink 2s infinite;
+    border-radius: 20px;
+    // animation: blink 3s infinite;
 }
 
 .svg {
@@ -39,7 +79,7 @@
 
 .background {
     fill: none;
-    stroke: #ddd;
+    stroke:rgba(240, 255, 241, 0.506);
 }
 
 .progress {
@@ -52,20 +92,6 @@
     // stroke: var(--color1);
     stroke-linecap: round;
     stroke-linejoin: round;
-
-    // &::-webkit-slider-thumb,
-    // &::-moz-range-thumb {
-    //     // appearance: none;
-    //     // width: 30px;
-    //     // height: 30px;
-    //     // background-color: #00ff00;
-    //     // color: #ff0000;
-    //     border: 2px solid #007bff; /* Thumb border */
-    //     width: 20px; /* Thumb width */
-    //     height: 20px; /* Thumb height */
-    //     border-radius: 50%; /* Rounded thumb */
-    //     cursor: pointer; /* Change cursor on hover */
-    // }
 }
 
 .text {

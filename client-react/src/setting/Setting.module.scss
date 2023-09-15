@@ -1,18 +1,15 @@
 @import '../globals.scss';
 
 .container {
-
-    margin-top: 50px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    margin-right: 40px;
-
     padding-top: 20px;
     padding-bottom: 20px;
     padding-left: 20px;
     padding-right: 20px;
     border-radius: 20px;
 
+    margin: 0 auto;
+    margin-top: 90px;
+    margin-bottom: 20px;
 
     background-color: rgba(102, 198, 185, 0.379);
     backdrop-filter: blur(5px);
@@ -20,11 +17,18 @@
     border: 2px solid rgb(139, 194, 236);
     border-radius: 20px;
 
+    // display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // justify-content: center;
+
     display: flex;
     flex-direction: column;
-    // align-self: center;
-    // justify-self: center;
-    // width: 40%;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    box-sizing: border-box;
+    align-self: center;
 }
 
 .title {
@@ -35,11 +39,20 @@
     margin-bottom: 50px;
 }
 
+.settingContainer{
+    background-color: rgba(57, 108, 102, 0.316);
+    border-radius: 20px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 .valueContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    // background-color: aqua;
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -47,7 +60,9 @@
 
 .label {
     font-size: 2rem;
-    font-weight: 500;
+    font-style: italic;
+    font-weight: 400;
+    margin-right: 60px;
 }
 
 .rightSideContainer {
@@ -81,7 +96,7 @@
 
 .separator {
     width: 100%;
-    height: 1px;
+    height: 2px;
     background-color: #948a8a;
     border: none;
     margin: 0;

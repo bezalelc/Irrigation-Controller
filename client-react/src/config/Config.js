@@ -10,7 +10,7 @@ const configMap = {
     wifi: {
         name: {
             id: '0',
-            message: 'Update your home WiFi name',
+            info: 'Update your home WiFi name',
             placeholder: 'Home WiFi name',
             inputType: 'text',
             note: '',
@@ -18,26 +18,8 @@ const configMap = {
         },
         password: {
             id: '1',
-            message: 'Update your home WiFi password',
+            info: 'Update your home WiFi password',
             placeholder: 'Home WiFi Password',
-            inputType: 'password',
-            note: '',
-            Icon: BiSolidKey
-        }
-    },
-    ap: {
-        name: {
-            id: '2',
-            message: 'Change the Access point name of the Irrigation controller',
-            placeholder: 'Access point name',
-            inputType: 'text',
-            note: '',
-            Icon: IoMdWifi
-        },
-        password: {
-            id: '3',
-            message: 'Change the Access point password of the Irrigation controller',
-            placeholder: 'Access point password',
             inputType: 'password',
             note: '',
             Icon: BiSolidKey
@@ -46,7 +28,7 @@ const configMap = {
     user: {
         name: {
             id: '4',
-            message: 'Update your email',
+            info: 'Update your email',
             placeholder: 'Email',
             inputType: 'email',
             note: '',
@@ -54,11 +36,29 @@ const configMap = {
         },
         password: {
             id: '5',
-            message: 'Update your password account',
+            info: 'Update your password account',
             placeholder: 'Password',
             inputType: 'password',
             note: '',
             Icon: RiLockPasswordLine
+        }
+    },
+    ap: {
+        name: {
+            id: '2',
+            info: 'Change the Access point name of the Irrigation controller',
+            placeholder: 'Access point name',
+            inputType: 'text',
+            note: '',
+            Icon: IoMdWifi
+        },
+        password: {
+            id: '3',
+            info: 'Change the Access point password of the Irrigation controller',
+            placeholder: 'Access point password',
+            inputType: 'password',
+            note: '',
+            Icon: BiSolidKey
         }
     }
 }
@@ -79,9 +79,9 @@ const Config = () => {
             <div className={style.configFields}>
                 <ConfigField type='wifi' mapValues={configMap.wifi} />
                 <hr className={style.separator} />
-                <ConfigField type='ap' mapValues={configMap.ap} />
-                <hr className={style.separator} />
                 <ConfigField type='user' mapValues={configMap.user} />
+                <hr className={style.separator} />
+                <ConfigField type='ap' mapValues={configMap.ap} />
             </div>
         </div>
     );

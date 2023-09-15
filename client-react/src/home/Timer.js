@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { BsStopwatch } from 'react-icons/bs';
+import style from './Timer.module.scss'
 
 function Timer() {
     const [seconds, setSeconds] = useState(0);
@@ -19,8 +21,11 @@ function Timer() {
     const formattedTime = new Date(seconds * 1000).toISOString().substring(11, 19);
 
     return (
-        <div>
-            <p>Working time: {formattedTime}</p>
+        <div className={style.container} info="The time elapsed since the tap was opened">
+            <div className={style.iconContainer}>
+                <BsStopwatch className={style.icon} />
+            </div>
+            <div className={style.div}>{formattedTime}</div>
         </div>
     );
 }

@@ -10,6 +10,21 @@
     }
 }
 
+@keyframes blink {
+    0% {
+        background-color: rgba(4, 113, 255, 0.573);
+    }
+
+    50% {
+        background-color: rgba(4, 255, 142, 0.566);
+    }
+
+    100% {
+        background-color: rgba(88, 183, 57, 0.575);
+
+    }
+}
+
 
 $z-index-navbar: 11;
 $z-index-top: 10;

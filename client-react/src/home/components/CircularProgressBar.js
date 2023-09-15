@@ -13,9 +13,9 @@ const CircularProgressBar = () => {
             <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`} className={style.svg}  >
                 <defs>
                     <linearGradient id='gradient'>
-                        <stop offset="0%" stopColor="red" />
-                        <stop offset="50%" stopColor="green" />
-                        <stop offset="100%" stopColor="blue" />
+                        <stop offset="0%" stopColor="rgba(1, 65, 149, 0.881)" />
+                        <stop offset="50%" stopColor="rgba(0, 55, 30, 0.904)" />
+                        <stop offset="100%" stopColor="rgba(35, 138, 0, 0.875)" />
                     </linearGradient>
                 </defs>
                 <circle cx={width / 2} cy={width / 2} strokeWidth="15px" r={radius} className={style.background} />

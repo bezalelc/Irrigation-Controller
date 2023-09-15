@@ -1,0 +1,130 @@
+@import '../globals.scss';
+
+.container {
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 20px;
+
+
+
+    background-color: rgba(57, 108, 102, 0.179);
+    border-radius: 15px;
+
+
+    // background-color: rgba(4, 113, 255, 0.273);
+    // background-color: rgba(4, 255, 142, 0.566);
+    // background-color: rgba(88, 183, 57, 0.875);
+
+    // background-color: rgba(1, 65, 149, 0.881);
+    // background-color: rgba(0, 55, 30, 0.904);
+    // background-color: rgba(35, 138, 0, 0.875);
+
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-self: center;
+    // animation: blink 3s infinite;
+    background-color: rgba(105, 137, 165, 0);
+    position: relative;
+    display: inline-block;
+}
+
+@keyframes blink {
+    0% {
+        background-color: rgba(248, 248, 248, 0);
+    }
+
+    50% {
+        background-color: rgba(157, 33, 33, 0.6);
+    }
+
+    100% {
+        background-color: rgba(157, 33, 33, 0.3);
+    }
+}
+
+.progressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    overflow: hidden;
+    z-index: -1;
+
+    animation: blink 2s linear infinite;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    // rect {
+    //     animation: blink 2s linear infinite;
+    // }
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.startTime {
+    font-size: 1.7rem;
+    font-weight: 600;
+    text-align: center;
+    align-self: center;
+}
+
+.divText {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .spanFirst {
+        font-size: 1.2rem;
+        font-style: italic;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .spanLast {
+        font-size: 1.2rem;
+        font-style: italic;
+        font-weight: 400;
+    }
+}
+
+.button {
+    font-size: 1.1rem;
+    font-style: italic;
+    cursor: pointer;
+    transition: transform 0.3s;
+    font-weight: 600;
+    border-radius: 20px;
+    background: none;
+
+    margin-top: 5px;
+    margin-right: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    @include phone {
+        font-size: 1.3rem;
+        padding-top: 5px;
+    }
+}

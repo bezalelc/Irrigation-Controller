@@ -15,19 +15,21 @@ const Setting = () => {
     return (
         <div className={style.container}>
             <div className={style.title}>Setting</div>
-            <div className={style.valueContainer}>
-                <label className={style.label}>Delay sec </label>
-                <div className={style.rightSideContainer}>
-                    <InputNumber val={updateDelaySec} increament={() => setUpdateDelaySec(prev => prev + 1)} decreament={() => setUpdateDelaySec(prev => prev > 0 ? prev - 1 : 0)} />
-                    <button className={style.button} onClick={() => { updateDb(updateDelaySecRef, updateDelaySec) }}>Update</button>
-                </div>
-            </div >
-            <hr className={style.separator} />
-            <div className={style.valueContainer}>
-                <label className={style.label}>Max taps </label>
-                <div className={style.rightSideContainer}>
-                    <InputNumber val={maxTaps} increament={() => setMaxTaps(prev => prev + 1)} decreament={() => setMaxTaps(prev => prev > 1 ? prev - 1 : 1)} />
-                    <button className={style.button} onClick={() => { updateDb(maxTapsRef, maxTaps) }}>Update</button>
+            <div className={style.settingContainer}>
+                <div className={style.valueContainer}>
+                    <label className={style.label}>Delay sec </label>
+                    <div className={style.rightSideContainer}>
+                        <InputNumber val={updateDelaySec} increament={() => setUpdateDelaySec(prev => prev + 1)} decreament={() => setUpdateDelaySec(prev => prev > 0 ? prev - 1 : 0)} />
+                        <button className={style.button} onClick={() => { updateDb(updateDelaySecRef, updateDelaySec) }}>Update</button>
+                    </div>
+                </div >
+                <hr className={style.separator} />
+                <div className={style.valueContainer}>
+                    <label className={style.label}>Max taps </label>
+                    <div className={style.rightSideContainer}>
+                        <InputNumber val={maxTaps} increament={() => setMaxTaps(prev => prev + 1)} decreament={() => setMaxTaps(prev => prev > 1 ? prev - 1 : 1)} />
+                        <button className={style.button} onClick={() => { updateDb(maxTapsRef, maxTaps) }}>Update</button>
+                    </div>
                 </div>
             </div>
         </div>

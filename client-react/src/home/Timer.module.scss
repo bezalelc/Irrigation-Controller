@@ -1,0 +1,46 @@
+@import '../globals.scss';
+
+.container {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+
+    .iconContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+    }
+
+    .div {
+        font-size: 2rem;
+        font-style: italic;
+        font-weight: 400;
+    }
+}
+
+[info] {
+    position: relative;
+}
+
+[info]:hover::after {
+    content: attr(info);
+    position: absolute;
+    top: 10%;
+    left: 30%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: rgb(230, 211, 211);
+    // z-index: 1;
+    z-index: $z-index-top-1 ;
+    font-size: large;
+    font-style: italic;
+    font-weight: 500;
+}

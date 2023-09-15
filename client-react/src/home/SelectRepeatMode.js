@@ -127,7 +127,7 @@ const weeklyOption = [
 
 function SelectRepeatMode({ plan, setPlan }) {
     const [selectedDaily, setSelectedDaily] = useState(plan.repeatMethod === 'daily' ? plan.repeat : 1);
-    const [selectedWeek, setSelectedWeek] = useState(plan.repeatMethod === 'weekly' ? plan.repeat.map(index => weeklyOption[index]) : []);
+    const [selectedWeek, setSelectedWeek] = useState(plan.repeatMethod === 'weekly' && plan.repeat ? plan.repeat.map(index => weeklyOption[index]) : []);
 
     const handleModeChange = (repeatMethod) => {
         setPlan(plan => ({
@@ -152,7 +152,7 @@ function SelectRepeatMode({ plan, setPlan }) {
         if (plan.repeatMethod === 'weekly') {
             setPlan(prevPlan => ({
                 ...prevPlan,
-                repeat: selectedWeek.map(day => day.value)
+                repeat: selectedWeek.map(day => day.value).sort()
             }));
         }
     }, [selectedWeek, plan.repeatMethod, setPlan]);
