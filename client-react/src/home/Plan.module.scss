@@ -13,7 +13,7 @@
 
 
 
-    background-color: rgba(57, 108, 102, 0.179);
+    background-color: $background-section;
     border-radius: 15px;
 
 
@@ -29,19 +29,18 @@
     flex-direction: row;
     justify-items: center;
     align-self: center;
-    // animation: blink 3s infinite;
-    background-color: rgba(105, 137, 165, 0);
     position: relative;
     display: inline-block;
 }
 
 @keyframes blink {
     0% {
-        background-color: rgba(248, 248, 248, 0);
+        background-color: rgba(248, 248, 248, 0.2);
+        // background-color: rgba(4, 113, 255, 0.273)
     }
 
     50% {
-        background-color: rgba(157, 33, 33, 0.6);
+        background-color: rgba(157, 33, 33, 0.3);
     }
 
     100% {
@@ -59,7 +58,7 @@
     overflow: hidden;
     z-index: -1;
 
-    animation: blink 2s linear infinite;
+    // animation: blink 2s linear infinite;
 
     svg {
         width: 100%;
@@ -105,23 +104,7 @@
 .button {
     font-size: 1.1rem;
     font-style: italic;
-    cursor: pointer;
-    transition: transform 0.3s;
-    font-weight: 600;
-    border-radius: 20px;
-    background: none;
-
     margin-top: 5px;
-    margin-right: 5px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-right: 20px;
-    padding-left: 20px;
-    background-color: rgba(0, 0, 0, 0.1);
-
-    &:hover {
-        transform: scale(1.1);
-    }
 
     @include phone {
         font-size: 1.3rem;

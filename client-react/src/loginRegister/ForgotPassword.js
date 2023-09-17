@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useFirebase } from "../FirebaseContext";
 import EmailInput from "./EmailInput";
 import style from './LoginRegister.module.scss'
+import SubmitButton from "../sharedComponents/SubmitButton";
 
 const ForgotPassword = () => {
     const { firebaseAuth } = useFirebase()
@@ -35,7 +36,8 @@ const ForgotPassword = () => {
                     <h1 className={style.h1}>Reset password</h1>
                     <EmailInput email={email} setEmail={setEmail} />
                     <div className={style.registerSpace}></div>
-                    <button className={style.buttonSubmit} type="submit">Reset</button>
+                    <SubmitButton text="Reset" onClick={resetHandler} className={style.buttonSubmit} />
+                    {/* <button className={style.buttonSubmit} type="submit">Reset</button> */}
                     <button className={style.returnToLogin} onClick={() => navigate('/')}>Return to login page</button>
                 </form>)}
         </div>

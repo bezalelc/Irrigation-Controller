@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: 500;
+    background-color: rgba(250, 15, 15, 0.619);
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    // background-color: rgba(102, 198, 185, 0.4);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    border: 4px solid rgb(139, 194, 236);
+}
+
+.disabled {
+    background-color: rgba(0, 0, 0, 0.324);
+    cursor: not-allowed;
+    color: rgba(240, 248, 255, 0.727);
+}
+
+.waiting {
+    background-color: rgb(158, 111, 124);
+    cursor: wait;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0% {
+        background-color: rgba(212, 111, 140, 0.833);
+        // background-color: rgba(4, 113, 255, 0.273)
+    }
+
+    50% {
+        background-color: rgba(104, 46, 46, 0.9);
+    }
+
+    100% {
+        background-color: rgba(248, 108, 108, 0.9);
+    }
+}

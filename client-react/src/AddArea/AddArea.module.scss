@@ -1,0 +1,72 @@
+@import '../globals.scss';
+
+.container {
+    background-color: $background-body;
+
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+
+    margin: 0 auto;
+    margin-top: 90px;
+    margin-bottom: 20px;
+
+    background-color: $background-body;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    border: 2px solid rgb(139, 194, 236);
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    box-sizing: border-box;
+    align-self: center;
+
+    @include phone {
+        max-width: 350px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 10px;
+
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 600;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 50px;
+
+    @include phone {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+}
+
+.form {
+    background-color: $background-section;
+    border-radius: 20px;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.button {
+    margin-top: 20px;
+}

@@ -18,7 +18,7 @@
 }
 
 .form {
-    background-color: rgba(102, 198, 185, 0.379);
+    background-color: $background-login;
     backdrop-filter: blur(10px);
     box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     border: 2px solid rgb(139, 194, 236);

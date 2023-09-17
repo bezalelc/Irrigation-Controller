@@ -1,0 +1,33 @@
+@import '../globals.scss';
+
+.container {
+    width: 100%;
+}
+
+.button {
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+    font-weight: 600;
+    width: 100%;
+    border-radius: 20px;
+    background: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: rgba(0, 0, 0, .1);
+    border: 2px solid rgb(184, 184, 184);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s ease-in-out;
+
+    &:hover {
+        transform: scale(1.03);
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, .2);
+    }
+
+    @include phone {
+        font-size: 1.3rem;
+        padding-top: 5px;
+    }
+}

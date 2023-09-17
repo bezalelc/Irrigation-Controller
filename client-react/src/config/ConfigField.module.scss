@@ -37,7 +37,7 @@
     top: 100%;
     left: 30%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: $background-section;
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 1rem;
@@ -46,6 +46,12 @@
     font-size: large;
     font-style: italic;
     font-weight: 500;
+
+    @include phone {
+        // font-size: medium;
+        padding: 5px 10px;
+        left: 70%;
+    }
 }
 
 // .label {
@@ -100,6 +106,10 @@
 
     @include phone {
         font-size: 1rem;
+        width: 18ch;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 34px;
     }
 }
 
@@ -143,8 +153,11 @@
     }
 
     @include phone {
-        font-size: 1.3rem;
+        font-size: 1rem;
         padding-top: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 5px;
     }
 
 }

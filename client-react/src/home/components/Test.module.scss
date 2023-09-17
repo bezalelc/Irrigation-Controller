@@ -12,7 +12,7 @@
     padding-right: 15px;
     border-radius: 20px;
 
-    background-color: rgba(57, 108, 102, 0.179);
+    background-color: $background-section;
     border-radius: 15px;
 
     display: flex;
@@ -45,4 +45,21 @@
             padding-top: 5px;
         }
     }
+}
+
+.activePlan {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.openTime,
+.label {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.label {
+    font-size: large;
+}
+
+.close {
+    margin-top: 10px;
 }

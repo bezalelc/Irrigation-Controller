@@ -1,4 +1,3 @@
-import { ref } from "firebase/database";
 import { useFirebase } from "../FirebaseContext";
 import style from './Switch.module.scss'
 

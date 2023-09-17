@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import EmailInput from "./EmailInput";
 import PaswwordlInput from "./PasswordInput";
 import SocialButton from "./SocialButton";
+import SubmitButton from '../sharedComponents/SubmitButton'
 import style from './LoginRegister.module.scss'
 
 const Login = () => {
@@ -40,7 +41,7 @@ const Login = () => {
                 <EmailInput email={email} setEmail={setEmail} />
                 <PaswwordlInput password={password} setPassword={setPassword} />
                 <button onClick={() => navigate('/forgotPassword')} className={style.buttonForgotPassword}>Forgot password?</button>
-                <button type="submit" className={style.buttonSubmit} onClick={loginWithEmailPasswordHandler}>Login</button>
+                <SubmitButton text="Login" onClick={loginWithEmailPasswordHandler} className={style.buttonSubmit} />
                 <div className={style.dontHaveAccount}>Don't have an account?{' '}
                     <button onClick={() => navigate('/register')} className={style.register}>register</button>
                 </div>

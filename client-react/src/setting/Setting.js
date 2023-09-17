@@ -20,7 +20,8 @@ const Setting = () => {
                     <label className={style.label}>Delay sec </label>
                     <div className={style.rightSideContainer}>
                         <InputNumber val={updateDelaySec} increament={() => setUpdateDelaySec(prev => prev + 1)} decreament={() => setUpdateDelaySec(prev => prev > 0 ? prev - 1 : 0)} />
-                        <button className={style.button} onClick={() => { updateDb(updateDelaySecRef, updateDelaySec) }}>Update</button>
+                        {/* <SubmitBUtton text="Update" className={style.button} onClick={() => updateDb(updateDelaySecRef, updateDelaySec)} /> */}
+                        <button className={style.button} onClick={() => { console.log(updateDelaySecRef); updateDb(updateDelaySecRef, updateDelaySec) }}>Update</button>
                     </div>
                 </div >
                 <hr className={style.separator} />

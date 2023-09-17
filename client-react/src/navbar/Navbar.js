@@ -18,15 +18,16 @@ const Navbar = () => {
     }
 
     return (
-        <div className={style.container}>
+        <nav className={style.container} key="navbar">
             <div className={style.title}>Irrigation Controller</div>
             <div className={style.buttonsContainer}>
                 {userId && location.pathname !== '/home' && <button onClick={() => navigate('/home')} className={style.button}>Home</button>}
                 {userId && location.pathname !== '/setting' && <button onClick={() => navigate('/setting')} className={style.button}>Setting</button>}
                 {userId && location.pathname !== '/config' && <button onClick={() => navigate('/config')} className={style.button}>Config</button>}
+                {userId && location.pathname !== '/addarea' && <button onClick={() => navigate('/addarea')} className={style.button}>NewArea</button>}
                 {userId && <button onClick={buttonLogoutHandler} className={style.button}>Logout</button>}
             </div>
-        </div>
+        </nav>
     );
 }
 

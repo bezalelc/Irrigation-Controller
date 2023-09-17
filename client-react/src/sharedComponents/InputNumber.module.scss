@@ -1,8 +1,10 @@
+@import '../globals.scss';
+
 .buttonsContainer {
-    // border: 2px solid black;
-    // border-radius: 25px;
-    // margin-bottom: 3px;
-    // margin-top: 3px;
+
+    @include phone{
+
+    }
 }
 
 .button {
@@ -20,18 +22,30 @@
     &:hover {
         transform: scale(1.3);
     }
+
+    @include phone {
+        font-size: 2rem;
+    }
 }
 
 .dec {
     padding-left: 20px;
     padding-right: 0px;
     border-radius: 45px 0 0 45px;
+
+    @include phone {
+        padding-left: 0px;
+    }
 }
 
 .inc {
     padding-left: 0px;
     padding-right: 15px;
     border-radius: 0 45px 45px 0;
+
+    @include phone {
+        padding-right: 0px;
+    }
 }
 
 .input {
@@ -55,5 +69,10 @@
         appearance: none;
         margin: 0;
         -webkit-appearance: none;
+    }
+
+    @include phone {
+        font-size: 2rem;
+        width: 3ch;
     }
 }

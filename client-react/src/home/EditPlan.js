@@ -1,18 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ClockTimePicker from "./ClockTimePicker";
 import DurationInput from "./DurationInput";
 import SelectRepeatMode from "./SelectRepeatMode";
 import style from './EditPlan.module.scss'
 
+const getToday = () => {
+    const today = new Date();
+
+    // Extract the date, month, and year
+    const day = today.getDate();
+    const month = today.getMonth() + 1; // Months are 0-based, so we add 1
+    const year = today.getFullYear();
+
+    // Format the date as a string (e.g., "09/16/2023")
+    const formattedDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;
+    return formattedDate
+}
+
+const planTemplate = {
+    startTime: "08:00",
+    duration: 15,
+    repeatMethod: "daily",
+    repeat: 0,
+    lastTime: getToday()
+}
+
 const AddPlan = ({ plan, updatePlansSorted, setAddPlanPopup }) => {
 
-    const [newPlan, setNewPlan] = useState(plan || {
-        startTime: "08:00",
-        duration: 15,
-        repeatMethod: "daily",
-        repeat: 0,
-        lastTime: "23.4.2023"
-    })
+
+    const [newPlan, setNewPlan] = useState(plan || planTemplate)
 
     const submit = () => {
         if (plan) {
@@ -26,39 +42,9 @@ const AddPlan = ({ plan, updatePlansSorted, setAddPlanPopup }) => {
         setAddPlanPopup(false)
     }
 
-    // Function to center the popup
-    const centerPopup = () => {
-        const popup = document.querySelector(`.${style.form}`);
-        if (popup) {
-            const parentWidth = window.innerWidth;
-            const parentHeight = window.innerHeight;
-            const popupWidth = popup.offsetWidth;
-            const popupHeight = popup.offsetHeight;
-
-            const left = (parentWidth - popupWidth) / 2;
-            const top = (parentHeight - popupHeight) / 2 - (parentHeight * 0.1);
-
-            popup.style.left = left + "px";
-            popup.style.top = top + "px";
-        }
-    };
-
-    // Recenter the popup when the window is resized
-    useEffect(() => {
-        window.addEventListener("resize", centerPopup);
-        return () => {
-            window.removeEventListener("resize", centerPopup);
-        };
-    }, []);
-
-    // Initial centering of the popup
-    useEffect(() => {
-        centerPopup();
-    }, []);
-
     return (
         <div className={style.container}>
-            <form onSubmit={event => event.preventDefault()} className={style.form}>
+            <form onSubmit={event => event.preventDefault()} className={style.form} key='edit-plan-form'>
                 <button onClick={() => setAddPlanPopup(false)} className={style.cancel}>X</button>
                 <div className={style.title}>{plan ? "Edit plan" : "Add new plan"}</div>
                 <div className={style.clockTimePickerContainer}>

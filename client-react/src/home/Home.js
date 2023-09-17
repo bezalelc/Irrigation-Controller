@@ -10,18 +10,20 @@ const Home = () => {
 
     return (
         <div className={style.container}>
-            <Tabs className={style.tabs} style={{ borderBottom: 'none' }} >
-                <TabList className={style.tabList} >
+            {data.areas &&
+                <Tabs className={style.tabs} style={{ borderBottom: 'none' }} >
+                    <TabList className={style.tabList} >
+                        {Object.entries(data.areas).map(([id, area]) => (
+                            <Tab key={id} selectedClassName={style.selectedTab} className={`${style.tab} react-tabs__tab`}>{area.name}</Tab>
+                        ))}
+                    </TabList>
                     {Object.entries(data.areas).map(([id, area]) => (
-                        <Tab key={id} selectedClassName={style.selectedTab} className={`${style.tab} react-tabs__tab`}>{area.name}</Tab>
+                        <TabPanel key={id} className={style.tabPanel}>
+                            <Area id={id} areaData={area} dbPathAreas={dbPathAreas} />
+                        </TabPanel>
                     ))}
-                </TabList>
-                {Object.entries(data.areas).map(([id, area]) => (
-                    <TabPanel key={id} className={style.tabPanel}>
-                        <Area id={id} areaData={area} dbPathAreas={dbPathAreas} />
-                    </TabPanel>
-                ))}
-            </Tabs>
+                </Tabs>}
+            {!data.areas && <h1 className={style.h1}> you have not taps yet!</h1>}
         </div>
     );
 }

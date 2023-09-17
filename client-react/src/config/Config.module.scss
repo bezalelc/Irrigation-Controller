@@ -1,23 +1,32 @@
+@import '../globals.scss';
+
 .container {
     padding-top: 20px;
     padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     border-radius: 20px;
 
-    background-color: rgba(102, 198, 185, 0.379);
+    background-color: $background-body;
     backdrop-filter: blur(5px);
     box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     border: 2px solid rgb(139, 194, 236);
     border-radius: 20px;
 
+  
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-self: center; 
     justify-content: center;
-    max-width: 800px;
-    box-sizing: border-box;
-    align-self: center;
     margin: auto;
     margin-top: 40px;
+    width: fit-content;
+
+    @include phone {
+        max-width: 380px;
+    }
 }
 
 .title {
@@ -26,13 +35,18 @@
     font-style: italic;
     text-align: center;
     margin-bottom: 50px;
+
+    @include phone {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
 }
 
 .instruction {
     font-size: 1rem;
     font-weight: 400;
 
-    background-color: rgba(57, 108, 102, 0.179);
+    background-color: $background-section;
     border-radius: 20px;
 
     padding-top: 20px;
@@ -42,19 +56,34 @@
 
     .b {
         font-size: 1.5rem;
+
+        @include phone {
+            font-size: 1rem;
+        }
+    }
+
+    @include phone {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        padding-right: 5px;
     }
 }
 
 .configFields {
     margin-top: 20px;
 
-    background-color: rgba(57, 108, 102, 0.179);
+    background-color: $background-section;
     border-radius: 20px;
 
     padding-top: 20px;
     padding-bottom: 20px;
     padding-left: 20px;
     padding-right: 20px;
+
+    @include phone {
+        padding: 10px;
+    }
 }
 
 .separator {

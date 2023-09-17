@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { ref } from "firebase/database";
 import { BsPencilFill } from 'react-icons/bs';
+import { useFirebase } from "../FirebaseContext";
 import AddPlan from "./EditPlan";
 import Plan from "./Plan";
 import Timer from "./Timer";
-import { useFirebase } from "../FirebaseContext";
 import CircularProgressBar from "./components/CircularProgressBar";
 import Switch from "./Switch";
-import style from './Area.module.scss'
 import Test from "./components/Test";
+import ManualButton from "./components/ManualButton";
+import style from './Area.module.scss'
+import SubmitButton from "../sharedComponents/SubmitButton";
 
 const Area = ({ id, areaData, dbPathAreas }) => {
-    const { updateDb, firebaseDB } = useFirebase()
+    const { updateDb, firebaseDB, data } = useFirebase()
     const dbPathArea = dbPathAreas + `/${id}`
     const plansRef = ref(firebaseDB, dbPathArea + '/plans')
     const nameRef = ref(firebaseDB, dbPathArea + '/name')
     const manualOpenRef = ref(firebaseDB, dbPathArea + '/manualOpen')
-    const fertilizeRef = ref(firebaseDB, dbPathArea + '/fertilize')
-
+    const fertilizerRef = ref(firebaseDB, dbPathArea + '/fertilizer')
     const [name, setName] = useState(areaData.name)
     const [addPlanPopUp, setAddPlanPopup] = useState(false)
 
@@ -32,7 +33,7 @@ const Area = ({ id, areaData, dbPathAreas }) => {
             }
             // else if (operation === 'update') {
             //     areaData.plans.splice(plan, 1)
-            // }
+            // }    
             areaData.plans = areaData.plans.sort((a, b) => {
                 const startTimeA = a.startTime;
                 const startTimeB = b.startTime;
@@ -42,34 +43,41 @@ const Area = ({ id, areaData, dbPathAreas }) => {
         updateDb(plansRef, areaData.plans)
     }
 
+    const deleteArea = () => {
+        updateDb(ref(firebaseDB, dbPathAreas), data.areas.filter((_, index) => parseInt(index) !== parseInt(id)))
+    }
+
     return (
         <div className={style.container}>
             <div className={style.containerNav}>
                 <div className={style.setting}>
                     <div className={style.firstRowContainer}>
                         <div className={style.setNameContainer} info="Edit Name">
-                            <input type="text" value={areaData.name} className={style.input} onChange={event => setName(event.target.value)} onBlur={updateDb(nameRef, name)} />
+                            <input type="text" value={name} className={style.input}
+                                onChange={event => { setName(event.target.value) }}
+                                onBlur={() => { updateDb(nameRef, name) }} />
                             <BsPencilFill className={style.icon} />
                         </div>
-                        <button className={style.addPlan} onClick={() => setAddPlanPopup(prev => !prev)}>Add plan</button>
+                        <SubmitButton text="Add plan" onClick={() => setAddPlanPopup(prev => !prev)} className={style.addPlan} />
                     </div>
                     <div className={style.switchContainer}>
                         <label className={style.switchLabel}>Manual open</label>
-                        <Switch manualOpen={areaData.manualOpen} dbRef={manualOpenRef} />
+                        <Switch value={areaData.manualOpen} dbRef={manualOpenRef} />
                     </div>
                     <div className={style.switchContainer}>
                         <label className={style.switchLabel}>Set as Fertilizer</label>
-                        <Switch manualOpen={areaData.fertilizer} dbRef={fertilizeRef} />
+                        <Switch value={areaData.fertilizer} dbRef={fertilizerRef} />
                     </div>
+                    <SubmitButton text="Delete Area" onClick={deleteArea} className={style.deleteContainer} />
                 </div>
 
-                <div className={style.status}>
-                    <CircularProgressBar />
-                </div>
+                {areaData.activePlan > -1 && areaData.isOpen && <div className={style.status}>
+                    <CircularProgressBar plan={areaData.plans[areaData.activePlan]} />
+                </div>}
 
                 <div className={style.manualButtonContainer}>
-                    <button className={`${style.manualButton} ${areaData.manualOpen ? style.manualButtonOpen : ''}`} onClick={() => { }}>{areaData.manualOpen ? 'On' : areaData.isOpen ? 'Off' : 'Waiting...'}</button>
-                    {!areaData.isOpen && <Timer />}
+                    <ManualButton isOpen={areaData.isOpen} close={areaData.close} manualOpen={areaData.manualOpen} dbPathArea={dbPathArea} />
+                    {(areaData.isOpen || areaData.manualOpen) && <Timer openTime={areaData.openTime} isOpen={areaData.isOpen} />}
                 </div>
 
                 <Test areaData={areaData} dbPathArea={dbPathArea} />
@@ -77,15 +85,10 @@ const Area = ({ id, areaData, dbPathAreas }) => {
             {areaData.plans &&
                 <div className={style.containerPlans}>
                     {Object.entries(areaData.plans).map(([id, plan]) => (
-                        <Plan key={id} planId={id} plan={plan} updatePlansSorted={updatePlansSorted} />
+                        <Plan key={id} planId={id} plan={plan} updatePlansSorted={updatePlansSorted}
+                            isActive={areaData.activePlan === parseInt(id)} />
                     ))}
                 </div>}
-            {/*             
-            {areaData.manualOpen && !areaData.isOpen && <div>Waiting...</div>}
-            <div>now {areaData.isOpen ? "open" : "closed"}</div>
-            {addPlanPopUp && <AddPlan updatePlansSorted={updatePlansSorted} setAddPlanPopup={setAddPlanPopup} />}
-                 */}
-            {/* <Timeline /> */}
             {addPlanPopUp && <AddPlan updatePlansSorted={updatePlansSorted} setAddPlanPopup={setAddPlanPopup} />}
         </div>
     );

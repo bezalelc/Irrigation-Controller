@@ -5,6 +5,7 @@ import { useFirebase } from "../FirebaseContext";
 import EmailInput from "./EmailInput";
 import PaswwordlInput from "./PasswordInput";
 import SocialButton from "./SocialButton";
+import SubmitButton from "../sharedComponents/SubmitButton";
 import style from './LoginRegister.module.scss'
 
 const Register = () => {
@@ -38,7 +39,8 @@ const Register = () => {
                 <EmailInput email={email} setEmail={setEmail} />
                 <PaswwordlInput password={password} setPassword={setPassword} />
                 <div className={style.registerSpace}></div>
-                <button type="submit" className={style.buttonSubmit} onClick={registerWithEmailPasswordHandler}>Register</button>
+                <SubmitButton text="Register" onClick={registerWithEmailPasswordHandler} className={style.buttonSubmit} />
+                {/* <button type="submit" className={style.buttonSubmit} onClick={}></button> */}
                 <div className={style.dontHaveAccount}>Already have an account?{' '}
                     <button onClick={() => navigate('/')} className={style.register}>login</button>
                 </div>

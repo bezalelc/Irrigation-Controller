@@ -3,22 +3,10 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: rgba(82, 220, 235, 0.94);
-    /* background: url('../public/resources/gif/drop.gif'); */
-    /* background-size: cover; */
-    /* background-repeat: no-repeat; */
-    /* background-attachment: fixed; */
-    /* align-items: center; */
     color: rgb(0, 0, 0);
     box-sizing: border-box;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    // align-items: center;
-    // align-self: center;
-    // justify-self: center;
     width: 100%;
+    height: 100%;
 }
 
 #background-gif {
@@ -34,14 +22,3 @@ body {
         background-position: center center;
     }
 }
-
-// /* Define the slow-motion animation */
-// @keyframes slowMotion {
-//     0% {
-//         background-position: 0 0;
-//     }
-
-//     100% {
-//         background-position: 100% 0;
-//     }
-// }

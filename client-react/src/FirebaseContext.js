@@ -7,44 +7,12 @@ import firebaseConfig from "./firebaseConfig";
 const FirebaseContext = createContext()
 
 const userTemplate = {
-    "areas": [
-        {
-            name: "arae1",
-            manualOpen: false,
-            isOpen: false,
-            plans: null
-        },
-        {
-            name: "arae2",
-            manualOpen: false,
-            isOpen: false,
-            plans: null
-        },
-        {
-            name: "arae3",
-            manualOpen: false,
-            isOpen: false,
-            plans: null
-        },
-        {
-            name: "arae4",
-            manualOpen: false,
-            isOpen: false,
-            plans: null
-        }
-    ],
+    areas: null,
     setting: {
         updateDelaySec: 60,
         maxTaps: 2
     }
 }
-
-// const planTemplate = {
-//     "startTime": "08:00",
-//     "duration": 0,
-//     "repeat": 0,
-//     "lastTime": "23.4.2023"
-// }
 
 export function FirebaseProvider({ children }) {
     const [userId, setUserId] = useState(null)
@@ -52,7 +20,6 @@ export function FirebaseProvider({ children }) {
     const firebaseDB = getDatabase(firebaseApp);
     const firebaseAuth = getAuth(firebaseApp);
     const [data, setData] = useState(userTemplate)
-    const dbRef = ref(firebaseDB, '/users/' + userId)
     const dbPath = '/users/' + userId
 
     useEffect(() => {
@@ -65,20 +32,16 @@ export function FirebaseProvider({ children }) {
 
 
     useEffect(() => {
-        onValue(dbRef, (snapshot) => {
+        onValue(ref(firebaseDB, '/users/' + userId), (snapshot) => {
             setData(() => ({
                 ...snapshot.val()
             }))
         })
-    }, [userId])
+    }, [userId, firebaseDB])
 
     const updateDb = (dbRef, value) => {
         set(dbRef, value);
     }
-
-    // const addNewUser = () => {
-    //     updateDb()
-    // }
 
     return (
         <FirebaseContext.Provider value={{

@@ -11,7 +11,7 @@
     margin-top: 90px;
     margin-bottom: 20px;
 
-    background-color: rgba(102, 198, 185, 0.379);
+    background-color: $background-body;
     backdrop-filter: blur(5px);
     box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     border: 2px solid rgb(139, 194, 236);
@@ -29,6 +29,16 @@
     max-width: 600px;
     box-sizing: border-box;
     align-self: center;
+
+    @include phone {
+        max-width: 350px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 10px;
+
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 }
 
 .title {
@@ -37,10 +47,15 @@
     font-style: italic;
     text-align: center;
     margin-bottom: 50px;
+
+    @include phone {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
 }
 
-.settingContainer{
-    background-color: rgba(57, 108, 102, 0.316);
+.settingContainer {
+    background-color: $background-section;
     border-radius: 20px;
 
     padding-top: 20px;
@@ -56,6 +71,10 @@
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
+
+    @include phone {
+        align-items: center;
+    }
 }
 
 .label {
@@ -63,6 +82,14 @@
     font-style: italic;
     font-weight: 400;
     margin-right: 60px;
+
+    @include phone {
+        font-size: 1rem;
+        margin-bottom: 0px;
+        font-weight: 500;
+        // background-color: aliceblue;
+        margin-right: 45px;
+    }
 }
 
 .rightSideContainer {
@@ -91,6 +118,7 @@
     @include phone {
         font-size: 1.3rem;
         padding-top: 5px;
+        margin-left: 10px;
     }
 }
 
