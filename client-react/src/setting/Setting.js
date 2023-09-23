@@ -2,14 +2,35 @@ import { useState } from "react";
 import { ref } from "firebase/database";
 import { useFirebase } from "../FirebaseContext";
 import InputNumber from "../sharedComponents/InputNumber";
+import SelectCustom from "../sharedComponents/SelectCustom";
 import style from './Setting.module.scss'
+
+// const updateMethod =
+//     [
+//         continuous,
+//         everyMinute,
+//         every5minute,
+//         every30minute,
+//         everyHour,
+//         everyDay
+//     ];
+
+const updateMethodOptions = [
+    { value: 0, label: 'Continuous' },
+    { value: 1, label: 'Every minute' },
+    { value: 2, label: 'Every 5 minute' },
+    { value: 3, label: 'Every 30 minute' },
+    { value: 4, label: 'Every hour' },
+    { value: 5, label: 'Every day' }
+]
+
+const maxTapsConnected = 32;
 
 const Setting = () => {
     const { firebaseDB, updateDb, data, dbPath } = useFirebase()
-    const [updateDelaySec, setUpdateDelaySec] = useState(data.setting.updateDelaySec)
     const [maxTaps, setMaxTaps] = useState(data.setting.maxTaps)
     const settingPath = dbPath + '/setting'
-    const updateDelaySecRef = ref(firebaseDB, settingPath + '/updateDelaySec')
+    const updateMethodRef = ref(firebaseDB, settingPath + '/updateMethod')
     const maxTapsRef = ref(firebaseDB, settingPath + '/maxTaps')
 
     return (
@@ -17,19 +38,15 @@ const Setting = () => {
             <div className={style.title}>Setting</div>
             <div className={style.settingContainer}>
                 <div className={style.valueContainer}>
-                    <label className={style.label}>Delay sec </label>
-                    <div className={style.rightSideContainer}>
-                        <InputNumber val={updateDelaySec} increament={() => setUpdateDelaySec(prev => prev + 1)} decreament={() => setUpdateDelaySec(prev => prev > 0 ? prev - 1 : 0)} />
-                        {/* <SubmitBUtton text="Update" className={style.button} onClick={() => updateDb(updateDelaySecRef, updateDelaySec)} /> */}
-                        <button className={style.button} onClick={() => { console.log(updateDelaySecRef); updateDb(updateDelaySecRef, updateDelaySec) }}>Update</button>
-                    </div>
+                    <label className={style.label}>Delay method </label>
+                    <SelectCustom isMulti={false} options={updateMethodOptions} onChange={selected => { updateDb(updateMethodRef, selected.value) }} setValue={() => updateMethodOptions[data.setting.updateMethod]} />
                 </div >
                 <hr className={style.separator} />
                 <div className={style.valueContainer}>
                     <label className={style.label}>Max taps </label>
                     <div className={style.rightSideContainer}>
-                        <InputNumber val={maxTaps} increament={() => setMaxTaps(prev => prev + 1)} decreament={() => setMaxTaps(prev => prev > 1 ? prev - 1 : 1)} />
-                        <button className={style.button} onClick={() => { updateDb(maxTapsRef, maxTaps) }}>Update</button>
+                        <InputNumber val={maxTaps} increament={() => setMaxTaps(prev => prev < maxTapsConnected ? prev + 1 : prev)} decreament={() => setMaxTaps(prev => prev > 1 ? prev - 1 : 1)} />
+                        <button className={style.button} onClick={() => updateDb(maxTapsRef, maxTaps)}>Update</button>
                     </div>
                 </div>
             </div>

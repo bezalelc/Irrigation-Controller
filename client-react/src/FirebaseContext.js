@@ -9,10 +9,22 @@ const FirebaseContext = createContext()
 const userTemplate = {
     areas: null,
     setting: {
-        updateDelaySec: 60,
-        maxTaps: 2
+        updateMethod: 0,
+        maxTaps: 2,
+        UTC: 3
     }
 }
+
+// export const updateMethod = [
+//     { continuous: "continuous" },
+//     { everyMinute: "every minute" },
+//     { every5minute: "every 5 minutes" },
+//     { every30minute: "every 30 minutes" },
+//     { everyHour: "every hour" },
+//     { everyDay: "every day" },
+//     { noUpdate: "no update" }
+// ]
+
 
 export function FirebaseProvider({ children }) {
     const [userId, setUserId] = useState(null)

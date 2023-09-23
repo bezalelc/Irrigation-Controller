@@ -4,25 +4,17 @@ import DurationInput from "./DurationInput";
 import SelectRepeatMode from "./SelectRepeatMode";
 import style from './EditPlan.module.scss'
 
-const getToday = () => {
-    const today = new Date();
-
-    // Extract the date, month, and year
-    const day = today.getDate();
-    const month = today.getMonth() + 1; // Months are 0-based, so we add 1
-    const year = today.getFullYear();
-
-    // Format the date as a string (e.g., "09/16/2023")
-    const formattedDate = `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;
-    return formattedDate
-}
+// const getToday = () => {
+//     const today = new Date();
+//     return `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear().toString().slice(-2)}`
+// }
 
 const planTemplate = {
     startTime: "08:00",
     duration: 15,
-    repeatMethod: "daily",
-    repeat: 0,
-    lastTime: getToday()
+    repeatMethod: 0, // default = daily
+    repeat: 1,
+    lastTime: false
 }
 
 const AddPlan = ({ plan, updatePlansSorted, setAddPlanPopup }) => {

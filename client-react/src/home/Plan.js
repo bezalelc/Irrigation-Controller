@@ -3,8 +3,27 @@ import EditPlan from "./EditPlan";
 import { GiSandsOfTime } from 'react-icons/gi'
 import { MdDateRange, MdOutlineEventRepeat } from 'react-icons/md'
 import { BiRepeat } from 'react-icons/bi'
-import style from './Plan.module.scss'
 import SubmitButton from "../sharedComponents/SubmitButton";
+import style from './Plan.module.scss'
+
+
+export const repeatMethod = [
+    {
+        text: "daily",
+        info: "Days between the bags",
+        repeatText: repeat => repeat
+    },
+    {
+        text: "weekly",
+        info: "The days of the week when the program will run",
+        repeatText: repeat => repeat ? repeat.map(day => `${day + 1}${' '}`) : '--'
+    },
+    {
+        text: "no repeat",
+        info: "One-time plan",
+        repeatText: () => '--'
+    }
+]
 
 const Plan = ({ planId, plan, updatePlansSorted, isActive }) => {
     const [editPlanPopUp, setEditPlanPopup] = useState(false)
@@ -44,33 +63,34 @@ const Plan = ({ planId, plan, updatePlansSorted, isActive }) => {
         }
     }, [isActive, startHour, startMinute, plan.duration]);
 
+    const getFormattedLastTime = () => {
+        const dateParts = plan.lastTime.split('.');
+        const year = dateParts[2];
+        const convertedDateString = `${dateParts[0]}.${dateParts[1]}.${year.length === 2 ? `20${year}` : year}`;
+        return convertedDateString;
+    };
 
-
-    const getStringRepaet = () => {
-        if (!plan.repeat) {
-            return '--'
-        }
-
-        if (plan.repeatMethod === 'daily') {
-            return plan.repeat
-        } else if (plan.repeatMethod === 'weekly') {
-            return plan.repeat.map(day => `${day + 1}${' '}`)
-        }
-
-        return '--'
-    }
 
     return (
         <div className={style.container}>
             <div className={style.wrapper}>
                 {/* <div className={style.divText}><span className={style.spanFirst}>start time</span><span className={style.spanLast}>{plan.startTime}</span></div> */}
                 <div className={`${style.divText} ${style.startTime}`}>{plan.startTime}</div>
-                <div className={style.divText} info="Last time the plan was on"><span className={style.spanFirst}>< MdDateRange /></span><span className={style.spanLast}>{plan.lastTime}</span></div>
-                <div className={style.divText} info="Duration"><span className={style.spanFirst} ><GiSandsOfTime /></span><span className={style.spanLast}>{plan.duration} min</span></div>
-                <div className={style.divText} info="Repeat method"><span className={style.spanFirst}><BiRepeat /></span ><span className={style.spanLast}>{plan.repeatMethod !== 'noRepit' ? plan.repeatMethod : "No repeat"}</span></div>
-                <div className={style.divText} info={plan.repeatMethod === 'daily' ? (plan.repeat === 0 ? "One-time plan" : "Days between the bags") : "The days of the week when the program will run"}>
+                <div className={style.divText} info="Last time the plan was on">
+                    <span className={style.spanFirst}>< MdDateRange /></span>
+                    <span className={style.spanLast}>{getFormattedLastTime(plan.lastTime)}</span>
+                </div>
+                <div className={style.divText} info="Duration">
+                    <span className={style.spanFirst} ><GiSandsOfTime /></span>
+                    <span className={style.spanLast}>{plan.duration} min</span>
+                </div>
+                <div className={style.divText} info="Repeat method">
+                    <span className={style.spanFirst}><BiRepeat /></span >
+                    <span className={style.spanLast}>{repeatMethod[plan.repeatMethod].text}</span>
+                </div>
+                <div className={style.divText} info={repeatMethod[plan.repeatMethod].info}>
                     <span className={style.spanFirst}><MdOutlineEventRepeat /></span>
-                    <span className={style.spanLast}>{getStringRepaet()}</span>
+                    <span className={style.spanLast}>{repeatMethod[plan.repeatMethod].repeatText(plan.repeat)}</span>
                 </div>
                 <SubmitButton text='Remove plan' onClick={() => updatePlansSorted("remove", planId)} className={style.button} />
                 <SubmitButton text='Edit plan' onClick={() => setEditPlanPopup(true)} className={style.button} />

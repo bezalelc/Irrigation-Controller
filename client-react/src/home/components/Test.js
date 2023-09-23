@@ -1,10 +1,14 @@
+// import { useState } from 'react'
 import { ref } from 'firebase/database';
 import { useFirebase } from '../../FirebaseContext';
-import style from './Test.module.scss'
 import SubmitButton from '../../sharedComponents/SubmitButton';
+// import PopupDialog from '../../sharedComponents/PopupDialog';
+import style from './Test.module.scss'
 
 const Test = ({ areaData, dbPathArea }) => {
     const { updateDb, firebaseDB } = useFirebase()
+    const today = new Date();
+    // const [p, setP] = useState(false)
 
     // Handle changes in the dropdown selection
     const handleOptionChange = (event) => {
@@ -16,8 +20,9 @@ const Test = ({ areaData, dbPathArea }) => {
     return (
         <div className={style.container}>
             <SubmitButton text={areaData.isOpen ? "Close" : "Open"} onClick={() => updateDb(ref(firebaseDB, dbPathArea + '/isOpen'), !areaData.isOpen)} />
-
-            {areaData.plans && <select className={style.activePlan} id="dropdown" value={areaData.activePlan} onChange={handleOptionChange}>
+            {/* <SubmitButton text="popup" onClick={() => setP(!p)} /> */}
+            {/* {p && <PopupDialog title="test" body="test" handleOpenModal={() => { }} handleCloseModal={() => { }} />} */}
+            {areaData.plans && <select className={style.activePlan} id="dropdown" value={areaData.activePlan < areaData.plans.length ? areaData.activePlan : -1} onChange={handleOptionChange}>
                 <option value="-1">-- Select an option --</option>
                 {areaData.plans.map((plan, index) => (
                     <option key={index} value={index}>{plan.startTime} </option>
@@ -26,8 +31,8 @@ const Test = ({ areaData, dbPathArea }) => {
 
             <div className={style.openTime}>
                 <label htmlFor="" className={style.label}>openTime</label>
-                <input type='time' value={areaData.openTime} className={style.openTime}
-                    onChange={event => updateDb(ref(firebaseDB, dbPathArea + '/openTime'), event.target.value)}
+                <input type='time' value={areaData.openTime.split(' ')[1]} className={style.openTime}
+                    onChange={event => updateDb(ref(firebaseDB, dbPathArea + '/openTime'), `${today.getDate()}.${today.getMonth() + 1}.23 ${event.target.value}`)}
                     step="1" />
             </div>
 

@@ -1,110 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
 import InputNumber from '../sharedComponents/InputNumber'
+import SelectCustom from '../sharedComponents/SelectCustom';
 import style from './SelectRepeatMode.module.scss'
 
-const selectStyle = {
-    container: (provided, state) => ({
-        // Style for the container that wraps the entire Select component
-        ...provided,
-        boxShadow: 'none',
-    }),
-
-    control: (provided, state) => ({
-        // Style for the control container (the outer container)
-        ...provided,
-        border: "2px solid grey",
-        borderColor: state.isFocused ? '#1c96ee97' : 'gray',
-        borderRadius: '10px',
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    }),
-
-    valueContainer: (provided, state) => ({
-        // Style for the value container (where selected values are displayed)
-        ...provided,
-        padding: '5px 5px',
-    }),
-
-    menu: (provided, state) => ({
-        // Style for the dropdown menu container
-        ...provided,
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        // color:"red",
-    }),
-
-    option: (provided, state) => ({
-        // Style for individual dropdown options
-        ...provided,
-        backgroundColor: state.isFocused ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.7)',
-        backdropFilter: 'blur(20px)',
-        // backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        color: "#d7e8ed",
-        border: "1px black solid",
-    }),
-
-    singleValue: (provided, state) => ({
-        // Style for the single selected value
-        ...provided,
-        color: 'black',
-        fontSize: "1.5rem",
-        fontWeight: "500",
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        padding: '5px 5px',
-        borderRadius: "10px",
-    }),
-
-    multiValue: (provided, state) => ({
-        // Style for a selected value in a multi-select
-        ...provided,
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        borderRadius: "10px",
-        // backgroundColor: state.isFocused ? "red" :""
-    }),
-
-    multiValueLabel: (provided, state) => ({
-        // Style for the label of a selected value in a multi-select
-        ...provided,
-        fontSize: "1.5rem",
-        fontWeight: "500",
-        color: "black",
-    }),
-
-    multiValueRemove: (provided, state) => ({
-        // Style for the remove button of a selected value in a multi-select
-        ...provided,
-        color: 'gray',
-    }),
-
-    indicatorSeparator: (provided, state) => ({
-        // Style for the separator between indicators (e.g., dropdown arrow and clear button)
-        ...provided,
-        backgroundColor: 'gray',
-        color: "red",
-    }),
-
-    dropdownIndicator: (provided, state) => ({
-        // Style for the dropdown indicator (the dropdown arrow)
-        ...provided,
-        // color: state.isHover ? "black" : "gray",
-    }),
-
-    placholder: (provided) => ({
-        ...provided,
-        // color: "black"
-    }),
-
-    clearIndicator: (provided, state) => ({
-        ...provided,
-        // color: state.isFocused ? "red" : "gray",
-        // backgroundColor: state.isFocused ? "rgba(247, 151, 138, 0.451)" : "rgba(0, 0, 0, 0)",
-        borderRadius: "10px",
-        marginRight: "5px",
-    }),
-
-};
-
 const dailyOptions = [
-    { value: 0, label: 'No repeat' },
     { value: 1, label: 'Repeat every day' },
     { value: 2, label: 'Repeat every Two days' },
     { value: 3, label: 'Repeat every Three days' },
@@ -125,21 +24,28 @@ const weeklyOption = [
     { value: 6, label: 'Saturday' },
 ]
 
+const repeatMethodValues = {
+    daily: 0,
+    weekly: 1,
+    noRepeat: 2
+}
+
 function SelectRepeatMode({ plan, setPlan }) {
-    const [selectedDaily, setSelectedDaily] = useState(plan.repeatMethod === 'daily' ? plan.repeat : 1);
-    const [selectedWeek, setSelectedWeek] = useState(plan.repeatMethod === 'weekly' && plan.repeat ? plan.repeat.map(index => weeklyOption[index]) : []);
+    const [selectedDaily, setSelectedDaily] = useState(plan.repeatMethod === repeatMethodValues.daily ? plan.repeat : 1);
+    const [selectedWeek, setSelectedWeek] = useState(plan.repeatMethod === repeatMethodValues.weekly && plan.repeat ? plan.repeat.map(index => weeklyOption[index]) : []);
 
     const handleModeChange = (repeatMethod) => {
+        console.log(selectedDaily, repeatMethod)
         setPlan(plan => ({
             ...plan,
             repeatMethod: repeatMethod,
-            repeat: repeatMethod === 'daily' ? selectedDaily : repeatMethod === 'weekly' ? selectedWeek : 0
+            repeat: repeatMethod === repeatMethodValues.daily ? selectedDaily : repeatMethod === repeatMethodValues.weekly ? selectedWeek : 0
         }))
     };
 
     useEffect(() => {
         // Update plan when selectedDaily changes
-        if (plan.repeatMethod === 'daily') {
+        if (plan.repeatMethod === repeatMethodValues.daily) {
             setPlan(prevPlan => ({
                 ...prevPlan,
                 repeat: selectedDaily
@@ -149,7 +55,7 @@ function SelectRepeatMode({ plan, setPlan }) {
 
     useEffect(() => {
         // Update plan when selectedWeek changes
-        if (plan.repeatMethod === 'weekly') {
+        if (plan.repeatMethod === repeatMethodValues.weekly) {
             setPlan(prevPlan => ({
                 ...prevPlan,
                 repeat: selectedWeek.map(day => day.value).sort()
@@ -160,7 +66,7 @@ function SelectRepeatMode({ plan, setPlan }) {
     const decreament = () => {
         setPlan(plan => ({
             ...plan,
-            repeat: plan.repeat > 0 ? plan.repeat - 1 : 0
+            repeat: plan.repeat > 1 ? plan.repeat - 1 : 1
         }))
     }
 
@@ -176,31 +82,35 @@ function SelectRepeatMode({ plan, setPlan }) {
         <div className={style.container}>
             <div className="mode-buttons">
                 <button
-                    className={`${style.button} ${plan.repeatMethod === 'daily' ? style.active : ''}`}
-                    onClick={() => handleModeChange('daily')} >
+                    className={`${style.button} ${plan.repeatMethod === repeatMethodValues.daily ? style.active : ''}`}
+                    onClick={() => handleModeChange(repeatMethodValues.daily)} >
                     Daily Mode
                 </button>
                 <button
-                    className={`${style.button} ${plan.repeatMethod === 'weekly' ? style.active : ''}`}
-                    onClick={() => handleModeChange('weekly')} >
+                    className={`${style.button} ${plan.repeatMethod === repeatMethodValues.weekly ? style.active : ''}`}
+                    onClick={() => handleModeChange(repeatMethodValues.weekly)} >
                     Weekly Mode
                 </button>
                 <button
-                    className={`${style.button} ${plan.repeatMethod === 'noRepeat' ? style.active : ''}`}
-                    onClick={() => handleModeChange('noRepeat')} >
+                    className={`${style.button} ${plan.repeatMethod === repeatMethodValues.noRepeat ? style.active : ''}`}
+                    onClick={() => handleModeChange(repeatMethodValues.noRepeat)} >
                     No repeat
                 </button>
             </div>
-            {plan.repeatMethod === 'daily' &&
+            {plan.repeatMethod === repeatMethodValues.daily &&
                 <div>
-                    <Select styles={selectStyle} options={dailyOptions} isMulti={false} value={plan.repeat < 8 ? dailyOptions[plan.repeat] : dailyOptions[8]} onChange={selected => setSelectedDaily(selected.value)} isSearchable />
+                    <SelectCustom options={dailyOptions} isMulti={false}
+                        onChange={selected => setSelectedDaily(selected.value)}
+                        setValue={() => plan.repeat < 8 ? dailyOptions[plan.repeat - 1] : dailyOptions[7]} />
                     {selectedDaily > 7 && <div className={style.customContainer}>
                         <label className={style.label}>Custom repeat</label>
                         <InputNumber val={plan.repeat} increament={increament} decreament={decreament} />
                     </div>}
                 </div>}
-            {plan.repeatMethod === 'weekly' &&
-                <Select value={selectedWeek} styles={selectStyle} options={weeklyOption} isMulti onChange={selected => setSelectedWeek(selected)} isSearchable />}
+            {plan.repeatMethod === repeatMethodValues.weekly &&
+                <SelectCustom options={weeklyOption} isMulti={true}
+                    onChange={selected => setSelectedWeek(selected)}
+                    setValue={() => selectedWeek} />}
         </div >
     );
 }

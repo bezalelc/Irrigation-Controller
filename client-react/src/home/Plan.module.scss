@@ -31,6 +31,32 @@
     align-self: center;
     position: relative;
     display: inline-block;
+
+    // transition: transform 1s ease-in;
+
+    // &:hover {
+    //     animation: circle-animation 1s normal infinite;
+    // }
+}
+
+@keyframes circle-animation {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+
+    // 33% {
+    //     transform: translateX(2%);
+    // }
+
+    // 66% {
+    //     transform: translateX(2%) translateY(2%);
+    // }
+
+    100% {
+        // background-color: aquamarine;
+        background-color: rgba(109, 109, 109, 0.403);
+        transform: translateY(2%) translateY(2%);
+    }
 }
 
 @keyframes blink {

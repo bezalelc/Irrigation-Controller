@@ -1,0 +1,26 @@
+.modal {
+    background-color: blue;
+    color: white;
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid white;
+  }
+  
+  .modal-title {
+    font-size: 20px;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid white;
+    padding: 20px;
+  }
+  
+  .modal-footer button {
+    margin-left: 5px;
+  }
+  

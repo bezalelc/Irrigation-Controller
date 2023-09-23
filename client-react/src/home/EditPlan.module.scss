@@ -42,8 +42,8 @@
     margin-bottom: 30px;
 
     @include phone {
-        max-width: 390px;
-        width: 90%;
+        min-width: 300px;
+        width: fit-content;
     }
 }
 
