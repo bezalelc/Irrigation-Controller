@@ -5,6 +5,7 @@
 #include <ESP8266WebServer.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <ctime>
 #include "configData.hpp"
 
 class Network
@@ -16,7 +17,7 @@ public:
 
     void connectToWifi();
 
-    void getNTPDate(struct tm &time) const;
+    time_t getNTPDate(uint8 UTC = 3) const;
 
     static Network &getInstance(ConfigData &configData);
 
@@ -37,7 +38,7 @@ private:
     static Network *instance;
 
     Network(ConfigData &configData);
-    
+
     static void IRAM_ATTR setAP();
 
     void handleUpdate();

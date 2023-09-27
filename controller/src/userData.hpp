@@ -60,7 +60,7 @@ public:
     {
         bool close;
         bool isOpen;
-        int8 activePlan; // 3bit options: [0,7]
+        int8 activePlan; // 3bit options: [,7]
         bool manualOpen;
         bool fertilizer;
 

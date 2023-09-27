@@ -1,6 +1,5 @@
 #ifdef ARDUINO
 
-#include <ctime>
 #include "network.hpp"
 #include "debugUtils.hpp"
 
@@ -8,6 +7,8 @@
 #define CONFIG_INPUT_PIN D2
 #define SERVER_PORT 80
 // TODO: define IP 192.168.4.1
+
+#define UTC_OFFSET_INSECONDS(utc) (utc * 3600)
 
 Network *Network::instance = nullptr;
 bool Network::configMode = false;
@@ -115,75 +116,15 @@ void Network::connectToWifi()
     DEBUG_MODE_PRINT_VALUES("IP address for network ", configData.wifiSSID, ": ", WiFi.localIP());
 }
 
-void Network::getNTPDate(struct tm &time) const
+time_t Network::getNTPDate(uint8 utc) const
 {
-    const long utcOffsetInSeconds = 3600 * 3;
-
     WiFiUDP ntpUDP;
-    NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
+    NTPClient timeClient(ntpUDP, "pool.ntp.org", UTC_OFFSET_INSECONDS(utc));
     timeClient.begin();
     timeClient.update();
-    // Week Days
-    // String weekDays[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
-    // // Month names
-    // String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-
-    // DEBUG_MODE_PRINT_VALUES(timeClient.getEpochTime());
-    // timeClient.update();
-
     time_t epochTime = timeClient.getEpochTime();
-    // DEBUG_MODE_PRINT_NAMES_VALUES(sizeof(time_t));==8
-    // Serial.print("Epoch Time: ");
-    // Serial.println(epochTime);
-
-    // String formattedTime = timeClient.getFormattedTime();
-    // Serial.print("Formatted Time: ");
-    // Serial.println(formattedTime);
-
-    // int currentHour = timeClient.getHours();
-    // Serial.print("Hour: ");
-    // Serial.println(currentHour);
-
-    // int currentMinute = timeClient.getMinutes();
-    // Serial.print("Minutes: ");
-    // Serial.println(currentMinute);
-
-    // int currentSecond = timeClient.getSeconds();
-    // Serial.print("Seconds: ");
-    // Serial.println(currentSecond);
-
-    // String weekDay = weekDays[timeClient.getDay()];
-    // Serial.print("Week Day: ");
-    // Serial.println(weekDay);
-
-    // Get a time structure
-    gmtime_r((time_t *)&epochTime, &time);
-    // struct tm *ptm = gmtime((time_t *)&epochTime);
-
-    // int monthDay = ptm->tm_mday;
-    // Serial.print("Month day: ");
-    // Serial.println(monthDay);
-
-    // int currentMonth = ptm->tm_mon + 1;
-    // Serial.print("Month: ");
-    // Serial.println(currentMonth);
-
-    // String currentMonthName = months[currentMonth - 1];
-    // Serial.print("Month name: ");
-    // Serial.println(currentMonthName);
-
-    // int currentYear = time.tm_year + 1900;
-    // Serial.print("Year: ");
-    // Serial.println(currentYear);
-
-    // Print complete date:
-    // String currentDate = String(currentYear) + "-" + String(currentMonth) + "-" + String(monthDay);
-    // Serial.print("Current date: ");
-    // Serial.println(currentDate);
-
-    // Serial.println("");
     timeClient.end();
+    return epochTime;
 }
 
 /**

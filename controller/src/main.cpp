@@ -46,7 +46,9 @@ void loop()
   }
   else
   {
-    irrigationManager->getNextDelay();
+    // irrigationManager->buildQueue();
+    irrigationManager->scanForNext();
+    // irrigationManager->getNextDelay();
   }
 
   DEBUG_MODE_PRINT_MEMORY_USAGE;
