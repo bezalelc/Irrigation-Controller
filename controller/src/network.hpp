@@ -12,16 +12,11 @@ class Network
 {
 public:
     static bool getConfigMode();
-
     void APMode();
-
     void connectToWifi();
-
-    time_t getNTPDate(uint8 UTC = 3) const;
+    time_t getNTPDate(uint8 UTC = 3);
 
     static Network &getInstance(ConfigData &configData);
-
-    static bool configMode;
 
     ~Network();
 
@@ -35,12 +30,13 @@ public:
 private:
     ESP8266WebServer server;
     ConfigData &configData;
+    time_t ntpTime;
+
     static Network *instance;
+    static bool configMode;
 
     Network(ConfigData &configData);
-
     static void IRAM_ATTR setAP();
-
     void handleUpdate();
 
     // Private copy constructor and assignment operator to prevent copying

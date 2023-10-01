@@ -17,15 +17,20 @@ public:
         time_t nextTime;
         uint8 area;
         uint8 plan;
+        bool isOpen;
 
-        PlanTime(time_t nextTime, uint8 area, uint8 plan) : nextTime(nextTime), area(area), plan(plan) {}
+        struct Update
+        {
+            time_t nextTime;
+            bool isOpen;
+        };
+
+        PlanTime(time_t nextTime, uint8 area, uint8 plan, bool isOpen) : nextTime(nextTime), area(area), plan(plan), isOpen(isOpen) {}
     };
 
     IrrigationManager(Network *network, ConfigData &configData);
 
     ~IrrigationManager();
-
-    uint32 getNextDelay();
 
     bool isOpennedTaps() const;
 
@@ -35,13 +40,18 @@ private:
     UserData &userData;
     FirebaseHandler &firebaseHandler;
     Network *network;
-    PeriorityQueue<PlanTime, time_t> *plansQueue;
+    PeriorityQueue<PlanTime, PlanTime::Update &> *plansQueue;
     uint8 opennedTaps;
     uint32 defaultDelay;
     time_t nextReading;
 
-    bool openArea(const PlanTime &planTime, time_t currentTime);
+    void init();
+    bool openArea(uint8 areaId, const struct tm &currentTimeTm, uint8 activePlan);
+    bool closeArea(uint8 areaId);
+    bool startPlan(const PlanTime &planTime, time_t currentTime);
+    bool stopPlan(const PlanTime &planTime);
     void buildQueue();
+    time_t calculateNextPlanTime(UserData::Plan &plan, time_t currentTime);
 };
 
 #endif // defined(ARDUINO) && !defined(IRRIGATION_MANAGER_HPP)

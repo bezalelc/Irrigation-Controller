@@ -1,13 +1,19 @@
 #ifdef ARDUINO
 
-#include "firebaseHandler.hpp"
+#include <ArduinoJson.h>
 // Provide the token generation process info.
 #include "addons/TokenHelper.h"
 #include "config.h"
 #include "debugUtils.hpp"
 #include "network.hpp"
+#include "firebaseHandler.hpp"
 
 #define FIREBASE_MAIN_PATH "/users/"
+#define FIREBASE_LAST_TIME_KEY "/lastTime/"
+#define OPEN_TIME_MAX_LEN 25 // todo 18
+#define LAST_TIME_MAX_LEN 25 // todo 9
+#define AREA_JSON_MAX_SIZE 512
+#define PLAN_JSON_MAX_SIZE 64
 
 FirebaseHandler *FirebaseHandler::instance = nullptr;
 
@@ -57,7 +63,7 @@ void FirebaseHandler::begin()
 
     // Getting the user UID might take a few seconds
     DEBUG_MODE_SERIAL_PRINT("Getting User UID ");
-    while (!Network::configMode && (firebaseAuth.token.uid) == "")
+    while (!Network::getConfigMode() && (firebaseAuth.token.uid) == "")
     {
         DEBUG_MODE_SERIAL_PRINT('.');
         delay(1000);
@@ -95,6 +101,86 @@ bool FirebaseHandler::readUserData(UserData &userData)
     doc.clear();
 
     return true;
+}
+
+bool FirebaseHandler::updatePlanStartTime(const UserData::Plan &plan, uint8 areaId, uint8 planId)
+{
+    if (!Firebase.ready())
+    {
+        DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
+        return false;
+    }
+
+    char timeBuffer[LAST_TIME_MAX_LEN];
+    snprintf(timeBuffer, LAST_TIME_MAX_LEN, "%02d.%02d.%02d", plan.lastTime.day, plan.lastTime.month, plan.lastTime.year);
+
+    if (Firebase.RTDB.setString(&firebaseData, databasePath + "/areas/" + areaId + "/plans/" + planId + FIREBASE_LAST_TIME_KEY, timeBuffer))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool FirebaseHandler::updateOpenArea(const UserData::Area &area, uint8 areaId)
+{
+    if (!Firebase.ready())
+    {
+        DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
+        return false;
+    }
+
+    StaticJsonDocument<AREA_JSON_MAX_SIZE> areaJson;
+    char timeBuffer[OPEN_TIME_MAX_LEN];
+
+    areaJson["activePlan"] = area.activePlan;
+    areaJson["close"] = false;
+    areaJson["isOpen"] = area.isOpen;
+    // areaJson["manualOpen"] = area.manualOpen;
+    snprintf(timeBuffer, OPEN_TIME_MAX_LEN, "%02d.%02d.%02d %02d:%02d:%02d",
+             area.openTime.day, area.openTime.month, area.openTime.year, area.openTime.hour, area.openTime.minute, area.openTime.secound);
+    areaJson["openTime"] = timeBuffer;
+
+    char jsonBuffer[AREA_JSON_MAX_SIZE];
+    serializeJson(areaJson, jsonBuffer, AREA_JSON_MAX_SIZE);
+
+    FirebaseJson json;
+    json.setJsonData(jsonBuffer);
+    if (Firebase.RTDB.updateNode(&firebaseData, databasePath + "/areas/" + areaId + "/", &json))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool FirebaseHandler::updateCloseArea(uint8 areaId)
+{
+    if (!Firebase.ready())
+    {
+        DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
+        return false;
+    }
+
+    StaticJsonDocument<AREA_JSON_MAX_SIZE> areaJson;
+    char timeBuffer[OPEN_TIME_MAX_LEN];
+
+    areaJson["activePlan"] = -1;
+    areaJson["close"] = false;
+    areaJson["isOpen"] = false;
+    areaJson["manualOpen"] = false;
+
+    char jsonBuffer[AREA_JSON_MAX_SIZE];
+    serializeJson(areaJson, jsonBuffer, AREA_JSON_MAX_SIZE);
+
+    FirebaseJson json;
+    json.setJsonData(jsonBuffer);
+    if (Firebase.RTDB.updateNode(&firebaseData, databasePath + "/areas/" + areaId + "/", &json))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 FirebaseHandler::~FirebaseHandler()

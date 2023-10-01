@@ -16,17 +16,17 @@ private:
     bool (*isSmallThan)(T *t1, T *t2);
     void (*update)(T *, M params);
 
-    uint8 getParentIdx(uint8 childIdx)
+    inline uint8 getParentIdx(uint8 childIdx)
     {
         return (childIdx - 1) / 2;
     }
 
-    uint8 getLeftIdx(uint8 parentIdx)
+    inline uint8 getLeftIdx(uint8 parentIdx)
     {
         return parentIdx * 2 + 1;
     }
 
-    uint8 getRightIdx(uint8 parentIdx)
+    inline uint8 getRightIdx(uint8 parentIdx)
     {
         return parentIdx * 2 + 2;
     }
@@ -198,6 +198,17 @@ public:
         update(next, params);
         heapArr[len++] = next;
         heapifyUp();
+    }
+
+    // todo debug temp
+    T **getHeap()
+    {
+        return heapArr;
+    }
+
+    uint8 getHeapLen()
+    {
+        return len;
     }
 };
 

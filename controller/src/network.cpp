@@ -13,7 +13,7 @@
 Network *Network::instance = nullptr;
 bool Network::configMode = false;
 
-Network::Network(ConfigData &configData) : server(SERVER_PORT), configData(configData)
+Network::Network(ConfigData &configData) : server(SERVER_PORT), configData(configData), ntpTime(0)
 {
 
     pinMode(CONFIG_INPUT_PIN, INPUT_PULLUP);
@@ -116,15 +116,20 @@ void Network::connectToWifi()
     DEBUG_MODE_PRINT_VALUES("IP address for network ", configData.wifiSSID, ": ", WiFi.localIP());
 }
 
-time_t Network::getNTPDate(uint8 utc) const
+time_t Network::getNTPDate(uint8 utc)
 {
+    if (ntpTime)
+    {
+        return ntpTime + millis() / 1000;
+    }
+
     WiFiUDP ntpUDP;
     NTPClient timeClient(ntpUDP, "pool.ntp.org", UTC_OFFSET_INSECONDS(utc));
     timeClient.begin();
     timeClient.update();
-    time_t epochTime = timeClient.getEpochTime();
+    ntpTime = timeClient.getEpochTime();
     timeClient.end();
-    return epochTime;
+    return ntpTime;
 }
 
 /**

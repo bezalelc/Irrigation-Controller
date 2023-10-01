@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <ctime>
-#include "tap.hpp"
 #include "debugUtils.hpp"
 #include "userData.hpp"
 #include "configData.hpp"
@@ -19,6 +18,7 @@ UserData *userData;
 Network *network;
 FirebaseHandler *firebaseHandler;
 IrrigationManager *irrigationManager;
+time_t delaySec;
 
 void restartConnection();
 
@@ -46,9 +46,7 @@ void loop()
   }
   else
   {
-    // irrigationManager->buildQueue();
-    irrigationManager->scanForNext();
-    // irrigationManager->getNextDelay();
+    delaySec = irrigationManager->scanForNext();
   }
 
   DEBUG_MODE_PRINT_MEMORY_USAGE;

@@ -2,7 +2,6 @@
 #define FIREBASE_HANDLER_HPP
 
 #include <Firebase_ESP_Client.h>
-#include <ArduinoJson.h>
 #include "configData.hpp"
 #include "userData.hpp"
 
@@ -13,6 +12,9 @@ public:
 
     void begin();
     bool readUserData(UserData &userData);
+    bool updatePlanStartTime(const UserData::Plan &plan, uint8 areaId, uint8 planId);
+    bool updateOpenArea(const UserData::Area &area, uint8 areaId);
+    bool updateCloseArea(uint8 areaId);
     ~FirebaseHandler();
 
 private:
