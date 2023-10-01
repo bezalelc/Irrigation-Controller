@@ -6,7 +6,7 @@ function Timer({ openTime, isOpen }) {
     const [elapsedTime, setElapsedTime] = useState(0);
 
     // Parse the openTime string to get the target time in milliseconds
-    const [targetHours, targetMinutes, targetSeconds] = openTime.split(':').map(Number);
+    const [targetHours, targetMinutes, targetSeconds] = openTime.split(' ')[1].split(':').map(Number);
     const targetTime = targetHours * 3600 + targetMinutes * 60 + targetSeconds;
 
     useEffect(() => {

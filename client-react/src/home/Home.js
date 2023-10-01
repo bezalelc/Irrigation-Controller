@@ -1,5 +1,5 @@
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css'; // Import the default styles
+import 'react-tabs/style/react-tabs.css'; // Import the default Tabs styles
 import { useFirebase } from "../FirebaseContext";
 import Area from "./Area";
 import style from './Home.module.scss'
@@ -23,7 +23,7 @@ const Home = () => {
                         </TabPanel>
                     ))}
                 </Tabs>}
-            {!data.areas && <h1 className={style.h1}> you have not taps yet!</h1>}
+            {!data.areas && <h1 className={style.h1}>{data.areas === null ? "Loading..." : "you have not taps yet!"}</h1>}
         </div>
     );
 }

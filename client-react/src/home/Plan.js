@@ -64,10 +64,14 @@ const Plan = ({ planId, plan, updatePlansSorted, isActive }) => {
     }, [isActive, startHour, startMinute, plan.duration]);
 
     const getFormattedLastTime = () => {
-        const dateParts = plan.lastTime.split('.');
-        const year = dateParts[2];
-        const convertedDateString = `${dateParts[0]}.${dateParts[1]}.${year.length === 2 ? `20${year}` : year}`;
-        return convertedDateString;
+        if (plan.lastTime) {
+            const dateParts = plan.lastTime.split('.');
+            const year = dateParts[2];
+            const convertedDateString = `${dateParts[0]}.${dateParts[1]}.${year.length === 2 ? `20${year}` : year}`;
+            return convertedDateString;
+        } else {
+            return '--'
+        }
     };
 
 

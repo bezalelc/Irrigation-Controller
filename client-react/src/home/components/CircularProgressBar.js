@@ -4,10 +4,10 @@ import style from './CircularProgressBar.module.scss'
 const radius = 85, width = 200
 const dashArray = radius * Math.PI * 2
 
-const CircularProgressBar = ({ plan }) => {
+const CircularProgressBar = ({ plan, area }) => {
     const [precentage, setPrecentage] = useState(0)
     const dashOffset = dashArray - (dashArray * precentage) / 100;
-    const [startHour, startMinute] = plan.startTime.split(':').map(Number);
+    const [startHour, startMinute, startSecound] = area.openTime.split(' ')[1].split(':').map(Number);
 
     useEffect(() => {
         // Function to calculate the percentage based on start time and duration
@@ -16,16 +16,20 @@ const CircularProgressBar = ({ plan }) => {
             const now = new Date();
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
+            const currentSecount = now.getSeconds();
 
-            // Calculate the total time in minutes from the start time to now
-            const totalTimeMinutes = (currentHour * 60 + currentMinute) - (startHour * 60 + startMinute);
+            // Calculate the total time in secounds from the start time to now
+            let totalTimeMinutes = (currentHour * 60 * 60 + currentMinute * 60 + currentSecount) -
+                (startHour * 60 * 60 + startMinute * 60 + startSecound);
+
+            if (totalTimeMinutes < 0) {
+                totalTimeMinutes += 86400; // 86400 seconds in a day
+            }
 
             // Calculate the percentage of elapsed time
-            const percentage = (totalTimeMinutes / (plan.duration || 1)) * 100; // Ensure plan.duration is at least 1 to avoid division by zero
-
+            const percentage = (totalTimeMinutes / ((plan.duration || 1) * 60)) * 100;
             // Ensure the percentage is within the 0-100 range
             const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
-
             return clampedPercentage;
         };
 
@@ -41,7 +45,7 @@ const CircularProgressBar = ({ plan }) => {
 
         // Clean up the interval when the component unmounts
         return () => clearInterval(interval);
-    }, [startHour, startMinute, plan.duration]);
+    }, [startHour, startMinute, startSecound, plan.duration]);
 
 
     return (
@@ -60,7 +64,6 @@ const CircularProgressBar = ({ plan }) => {
                     transform={`rotate(-90 ${width / 2} ${width / 2})`} stroke="url(#gradient)" fill="url(#gradient)" />
                 <text className={style.text} x='50%' y='50%' dy='0.3em' textAnchor='middle' fill="url(#gradient)">{Math.floor(precentage)}%</text>
             </svg>
-            {/* <input className={style.input} type="range" min="0" max="100" step="1" value={precentage} onChange={event => setPrecentage(event.target.value)} /> */}
         </div>
     );
 }

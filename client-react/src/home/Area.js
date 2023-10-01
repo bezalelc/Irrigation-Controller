@@ -22,10 +22,38 @@ const Area = ({ id, areaData, dbPathAreas }) => {
     const [name, setName] = useState(areaData.name)
     const [addPlanPopUp, setAddPlanPopup] = useState(false)
 
+    // Function to check if a new plan overlaps with existing plans
+    function isPlanOverlapping(newPlan) {
+        const newStartTime = new Date(`2000-01-01T${newPlan.startTime}`);
+        const newEndTime = new Date(newStartTime.getTime() + newPlan.duration * 60000);
+
+        for (const existingPlan of areaData.plans) {
+            const existingStartTime = new Date(`2000-01-01T${existingPlan.startTime}`);
+            const existingEndTime = new Date(existingStartTime.getTime() + existingPlan.duration * 60000);
+
+            // Check if there is an overlap
+            if (
+                (newStartTime >= existingStartTime && newStartTime < existingEndTime) || // New plan starts within existing plan
+                (newEndTime > existingStartTime && newEndTime <= existingEndTime) || // New plan ends within existing plan
+                (newStartTime <= existingStartTime && newEndTime >= existingEndTime) // New plan completely overlaps existing plan
+            ) {
+                return true; // Overlap detected
+            }
+        }
+
+        return false; // No overlap detected
+    }
+
     const updatePlansSorted = (operation, plan) => {
         if (!areaData.plans || !areaData.plans.length) {
             areaData.plans = plan ? [plan] : false
         } else {
+            if (operation === 'add' || operation === 'update') {
+                if (isPlanOverlapping(plan)) {
+                    return false;
+                }
+            }
+
             if (operation === 'add') {
                 areaData.plans.push(plan)
             } else if (operation === 'remove') {
@@ -72,7 +100,7 @@ const Area = ({ id, areaData, dbPathAreas }) => {
                 </div>
 
                 {areaData.activePlan > -1 && areaData.isOpen && <div className={style.status}>
-                    <CircularProgressBar plan={areaData.plans[areaData.activePlan]} />
+                    <CircularProgressBar plan={areaData.plans[areaData.activePlan]} area={areaData} />
                 </div>}
 
                 <div className={style.manualButtonContainer}>
