@@ -8,6 +8,9 @@ const Home = () => {
     const { data, dbPath } = useFirebase()
     const dbPathAreas = dbPath + '/areas'
 
+    // if (data && data.areas)
+    //     Object.entries(data.areas).map(([id, area]) => { console.log("id:", id, "area:", area) })
+
     return (
         <div className={style.container}>
             {data.areas &&

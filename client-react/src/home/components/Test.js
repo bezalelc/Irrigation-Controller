@@ -12,7 +12,6 @@ const Test = ({ areaData, dbPathArea }) => {
 
     // Handle changes in the dropdown selection
     const handleOptionChange = (event) => {
-        console.log(parseInt(event.target.value))
         updateDb(ref(firebaseDB, dbPathArea + '/activePlan'), parseInt(event.target.value))
     }
 
@@ -24,14 +23,15 @@ const Test = ({ areaData, dbPathArea }) => {
             {/* {p && <PopupDialog title="test" body="test" handleOpenModal={() => { }} handleCloseModal={() => { }} />} */}
             {areaData.plans && <select className={style.activePlan} id="dropdown" value={areaData.activePlan < areaData.plans.length ? areaData.activePlan : -1} onChange={handleOptionChange}>
                 <option value="-1">-- Select an option --</option>
-                {areaData.plans.map((plan, index) => (
-                    <option key={index} value={index}>{plan.startTime} </option>
+                {/* {<div>{console.log(JSON.stringify(areaData.plans))}</div>} */}
+                {Object.keys(areaData.plans).map((key) => (
+                    <option key={key.substring(2)} value={key.substring(2)}>{areaData.plans[key].startTime} </option>
                 ))}
             </select>}
 
             <div className={style.openTime}>
                 <label htmlFor="" className={style.label}>openTime</label>
-                <input type='time' value={areaData.openTime.split(' ')[1]} className={style.openTime}
+                <input type='time' value={areaData.openTime ? areaData.openTime.split(' ')[1] : '00:00:00'} className={style.openTime}
                     onChange={event => updateDb(ref(firebaseDB, dbPathArea + '/openTime'), `${today.getDate()}.${today.getMonth() + 1}.23 ${event.target.value}`)}
                     step="1" />
             </div>

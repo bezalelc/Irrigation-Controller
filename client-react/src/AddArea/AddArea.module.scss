@@ -67,6 +67,28 @@
     align-items: center;
 }
 
-.button {
+.tapId {
+    width: 100%;
     margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    input {
+        font-size: 1.5rem;
+        width: 5ch;
+        border-radius: 10px;
+        text-indent: 0.7ch;
+        background-color: rgba(0, 0, 0, 0);
+    }
+}
+
+.tapIdText {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.button {
+    margin-top: 40px;
 }

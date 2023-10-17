@@ -35,7 +35,6 @@ function SelectRepeatMode({ plan, setPlan }) {
     const [selectedWeek, setSelectedWeek] = useState(plan.repeatMethod === repeatMethodValues.weekly && plan.repeat ? plan.repeat.map(index => weeklyOption[index]) : []);
 
     const handleModeChange = (repeatMethod) => {
-        console.log(selectedDaily, repeatMethod)
         setPlan(plan => ({
             ...plan,
             repeatMethod: repeatMethod,

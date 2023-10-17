@@ -96,7 +96,7 @@ const Plan = ({ planId, plan, updatePlansSorted, isActive }) => {
                     <span className={style.spanFirst}><MdOutlineEventRepeat /></span>
                     <span className={style.spanLast}>{repeatMethod[plan.repeatMethod].repeatText(plan.repeat)}</span>
                 </div>
-                <SubmitButton text='Remove plan' onClick={() => updatePlansSorted("remove", planId)} className={style.button} />
+                <SubmitButton text='Remove plan' onClick={() => updatePlansSorted("remove", plan, planId)} className={style.button} />
                 <SubmitButton text='Edit plan' onClick={() => setEditPlanPopup(true)} className={style.button} />
                 {editPlanPopUp && <EditPlan plan={plan} planId={planId} updatePlansSorted={updatePlansSorted} setAddPlanPopup={setEditPlanPopup} />}
             </div>

@@ -4,8 +4,8 @@ import { GiTap } from 'react-icons/gi'
 import InputText from '../sharedComponents/InputText';
 import SubmitBUtton from '../sharedComponents/SubmitButton';
 import { useFirebase } from '../FirebaseContext';
-import style from './AddArea.module.scss'
 import { useNavigate } from 'react-router-dom';
+import style from './AddArea.module.scss'
 
 const AddArea = () => {
     const [newArea, setNewArea] = useState({
@@ -15,24 +15,29 @@ const AddArea = () => {
         isOpen: false,
         manualOpen: false,
         name: "",
-        openTime: "00:00:00",
-        "plans": null
+        openTime: false,
+        plans: false
     })
     const { updateDb, firebaseDB, data, dbPath } = useFirebase()
-    const areaRef = ref(firebaseDB, dbPath + '/areas')
     const navigate = useNavigate()
+    const [tapId, setTapId] = useState(false)
 
 
 
     const submit = () => {
-        if (!newArea.name) {
-            return
+        if (!newArea.name || tapId === false || (data.areas && tapId in data.areas)) {
+            return false
         }
         if (!data.areas) {
-            data.areas = []
+            data.areas = {}
         }
-        updateDb(areaRef, [...data.areas, newArea])
+
+        updateDb(ref(firebaseDB, dbPath + '/areas/' + tapId), newArea)
         navigate('/home')
+    }
+
+    const tapIdHandler = (event) => {
+        setTapId("id" + event.target.value)
     }
 
     return (
@@ -43,6 +48,10 @@ const AddArea = () => {
                     ...prev,
                     name: name
                 }))} />
+                <div className={style.tapId}>
+                    <div className={style.tapIdText}>Select tap number</div>
+                    <input className={style.input} type='number' min={0} max={31} onChange={tapIdHandler} required></input>
+                </div>
                 <SubmitBUtton text="Add" onClick={submit} className={style.button} />
             </form>
         </div>

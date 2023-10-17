@@ -17,17 +17,14 @@ const planTemplate = {
     lastTime: false
 }
 
-const AddPlan = ({ plan, updatePlansSorted, setAddPlanPopup }) => {
+const EditPlan = ({ plan, planId, updatePlansSorted, setAddPlanPopup }) => {
 
 
     const [newPlan, setNewPlan] = useState(plan || planTemplate)
 
     const submit = () => {
         if (plan) {
-            for (const key in newPlan) {
-                plan[key] = newPlan[key];
-            }
-            updatePlansSorted("update")
+            updatePlansSorted("update", newPlan, planId)
         } else {
             updatePlansSorted("add", newPlan)
         }
@@ -56,4 +53,4 @@ const AddPlan = ({ plan, updatePlansSorted, setAddPlanPopup }) => {
     );
 }
 
-export default AddPlan;
+export default EditPlan;
