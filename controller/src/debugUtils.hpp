@@ -92,7 +92,13 @@ static void printNamesValues(const char *names, Arg &&arg, Rest &&...args)
 }
 
 #define DEBUG_MODE_PRINT_MEMORY_USAGE \
-    DEBUG_MODE_PRINT_NAMES_VALUES(ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace(), ESP.getCpuFreqMHz())
+    DEBUG_MODE_PRINT_VALUES("FreeHeap=", ESP.getFreeHeap(), ", SketchSize=", ESP.getSketchSize(), ", FreeSketchSpace=", ESP.getFreeSketchSpace(), ", CpuFreqMHz=", ESP.getCpuFreqMHz(), ", stack size=", (int32_t)stackSize());
+extern char *stackStart;
+static int32_t stackSize()
+{
+    char stack;
+    return (int32_t)stackStart - (int32_t)&stack;
+}
 
 #else
 #define DEBUG_MODE_SERIAL_BEGIN

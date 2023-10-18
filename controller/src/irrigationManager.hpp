@@ -3,11 +3,15 @@
 
 #include <ctime>
 #include <Arduino.h>
-#include "userData.hpp"
+#include "setting.hpp"
+#include "area.hpp"
 #include "configData.hpp"
 #include "network.hpp"
 #include "firebaseHandler.hpp"
 #include "periorityQueue.hpp"
+
+constexpr uint8 MAX_AREAS = 32;
+constexpr uint16 MAX_TOTAL_PLANS = MAX_AREAS * MAX_PLANS_IN_AREA;
 
 class IrrigationManager
 {
@@ -15,8 +19,8 @@ public:
     struct PlanTime
     {
         time_t nextTime;
-        uint8 area;
-        uint8 plan;
+        uint8 areaId;
+        uint8 planId;
         bool isOpen;
 
         struct Update
@@ -25,33 +29,35 @@ public:
             bool isOpen;
         };
 
-        PlanTime(time_t nextTime, uint8 area, uint8 plan, bool isOpen) : nextTime(nextTime), area(area), plan(plan), isOpen(isOpen) {}
+        PlanTime(time_t nextTime, uint8 areaId, uint8 planId, bool isOpen)
+            : nextTime(nextTime), areaId(areaId), planId(planId), isOpen(isOpen) {}
     };
 
-    IrrigationManager(Network *network, ConfigData &configData);
-
+    IrrigationManager(Network *network, FirebaseHandler &firebaseHandler);
     ~IrrigationManager();
-
     bool isOpennedTaps() const;
-
     time_t scanForNext();
 
+    void addToQueue(uint8 areaId, uint8 planId);
+    void deleteFromQueue(uint8 areaId, uint8 planId);
+    void increasOpennedTaps();
+    void decreasOpennedTaps();
+    bool freeTap() const;
+
 private:
-    UserData &userData;
     FirebaseHandler &firebaseHandler;
     Network *network;
-    PeriorityQueue<PlanTime, PlanTime::Update &> *plansQueue;
+    PeriorityQueue<PlanTime, PlanTime::Update &, MAX_TOTAL_PLANS> *plansQueue;
     uint8 opennedTaps;
-    uint32 defaultDelay;
     time_t nextReading;
+    bool firebaseInit;
 
-    void init();
-    bool openArea(uint8 areaId, const struct tm &currentTimeTm, uint8 activePlan);
-    bool closeArea(uint8 areaId);
-    bool startPlan(const PlanTime &planTime, time_t currentTime);
-    bool stopPlan(const PlanTime &planTime);
+    Setting setting;
+    Area *areas[MAX_AREAS];
+
+    bool getFromFirebase();
     void buildQueue();
-    time_t calculateNextPlanTime(UserData::Plan &plan, time_t currentTime);
+    time_t calculateNextPlanTime(Plan &plan, time_t currentTime);
 };
 
 #endif // defined(ARDUINO) && !defined(IRRIGATION_MANAGER_HPP)

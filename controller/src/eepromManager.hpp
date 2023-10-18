@@ -2,7 +2,7 @@
 #define EEPROM_MANAGER
 
 #include <EEPROM.h>
-#include "debugUtils.hpp"
+// #include "debugUtils.hpp"
 #include "configData.hpp"
 
 #define CONFIG_SIZE 33*6

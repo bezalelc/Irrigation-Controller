@@ -2,6 +2,7 @@
 
 #include <ArduinoJson.h>
 #include "debugUtils.hpp"
+#include "utils.h"
 #include "irrigationManager.hpp"
 #include "tapAdaptaer.hpp"
 
@@ -10,116 +11,67 @@
 #define AREA_JSON_MAX_SIZE 512
 #define PLAN_JSON_MAX_SIZE 64
 
-#define MAX_UINT32 (0xFFFFFFFFU)
-#define IS_BIT_SET(variable, bit) ((variable & (1 << bit)) != 0)
-
-#define MINUTES_TO_SECOUNDS(minutes) (minutes * 60)
-#define HOURS_TO_SECOUNDS(hours) (hours * MINUTES_TO_SECOUNDS(60))
-#define DAYS_TO_SECOUNDS(days) (days * HOURS_TO_SECOUNDS(24))
-const uint32 updateMethodDelaySecounds[UserData::Setting::UPDATE_METHOD_MAX_VAL] = {
-    [UserData::Setting::UPDATE_METHOD_CONTINUOUS] = 0,
-    [UserData::Setting::UPDATE_METHOD_EVERY_MINUTE] = MINUTES_TO_SECOUNDS(1),
-    [UserData::Setting::UPDATE_METHOD_EVERY_5_MINUTE] = MINUTES_TO_SECOUNDS(5),
-    [UserData::Setting::UPDATE_METHOD_EVERY_30_MINUTE] = MINUTES_TO_SECOUNDS(30),
-    [UserData::Setting::UPDATE_METHOD_EVERY_HOUR] = HOURS_TO_SECOUNDS(1),
-    [UserData::Setting::UPDATE_METHOD_DAY] = DAYS_TO_SECOUNDS(1),
-};
-
-void IrrigationManager::init()
+IrrigationManager::IrrigationManager(Network *network, FirebaseHandler &firebaseHandler)
+    : firebaseHandler(firebaseHandler), network(network), plansQueue(nullptr), opennedTaps(0), nextReading(0), firebaseInit(false)
 {
-
-    for (uint8 areaId = 0; areaId < userData.areasLen; areaId++)
+    for (uint8 areaId = 0; areaId < MAX_AREAS; areaId++)
     {
-        if (userData.areas[areaId].close)
+        areas[areaId] = nullptr;
+    }
+}
+
+IrrigationManager::~IrrigationManager()
+{
+    for (uint8 areaId = 0; areaId < MAX_AREAS; areaId++)
+    {
+        delete areas[areaId];
+    }
+    delete plansQueue;
+}
+
+bool IrrigationManager::getFromFirebase()
+{
+    DynamicJsonDocument doc(JSON_MAX_SIZE);
+    firebaseHandler.readUserData(doc, firebaseInit);
+
+    JsonObject jsonData = doc.as<JsonObject>();
+    if (jsonData["setting"])
+    {
+        setting.update(jsonData["setting"]);
+    }
+
+    JsonObject jsonAreas = jsonData["areas"];
+    if (jsonAreas)
+    {
+        for (JsonPair jsonArea : jsonAreas)
         {
-            userData.areas[areaId].manualOpen = false;
-            userData.areas[areaId].close = false;
-            userData.areas[areaId].activePlan = -1;
-            closeArea(areaId);
+            uint8 areaId = ((String)(jsonArea.key().c_str())).substring(2).toInt();
+            const JsonObject jsonObjectArea = (const JsonObject)jsonArea.value();
+
+            if (jsonObjectArea)
+            {
+                if (areas[areaId])
+                {
+                    areas[areaId]->update(jsonObjectArea, network->getNTPDate(setting.UTC));
+                }
+                else
+                {
+                    areas[areaId] = new Area(areaId, jsonObjectArea, *this, firebaseHandler);
+                }
+            }
+            else
+            {
+                delete areas[areaId];
+                areas[areaId] = nullptr;
+            }
         }
-        if (userData.areas[areaId].manualOpen)
-        {
-            struct tm currentTimeTm;
-            time_t currentTime = network->getNTPDate();
-            gmtime_r(&currentTime, &currentTimeTm);
-            openArea(areaId, currentTimeTm, -1);
-        }
-    }
-}
-
-bool IrrigationManager::openArea(uint8 areaId, const struct tm &currentTimeTm, uint8 activePlan)
-{
-    UserData::Area &area = userData.areas[areaId];
-
-    if ((opennedTaps >= userData.setting.maxTaps && !area.isOpen) || area.close)
-    {
-        return false;
     }
 
-    if (!area.isOpen)
+    doc.clear();
+    if (!firebaseInit)
     {
-        TapAdapter::open(areaId);
-
-        area.isOpen = true;
-        opennedTaps++;
-        area.activePlan = activePlan;
-
-        area.openTime.year = currentTimeTm.tm_year - 100;
-        area.openTime.month = currentTimeTm.tm_mon + 1;
-        area.openTime.day = currentTimeTm.tm_mday;
-        area.openTime.hour = currentTimeTm.tm_hour;
-        area.openTime.minute = currentTimeTm.tm_min;
-        area.openTime.secound = currentTimeTm.tm_sec;
-
-        firebaseHandler.updateOpenArea(area, areaId);
-    }
-
-    return area.isOpen;
-}
-
-bool IrrigationManager::closeArea(uint8 areaId)
-{
-    UserData::Area &area = userData.areas[areaId];
-
-    if (area.isOpen && !area.manualOpen)
-    {
-        TapAdapter::close(areaId);
-        opennedTaps--;
-        area.isOpen = false;
-    }
-
-    firebaseHandler.updateCloseArea(areaId);
-
-    return !area.isOpen;
-}
-
-bool IrrigationManager::startPlan(const PlanTime &planTime, time_t currentTime)
-{
-    UserData::Area &area = userData.areas[planTime.area];
-    UserData::Plan &plan = area.plans[planTime.plan];
-    struct tm currentTimeTm;
-    gmtime_r((time_t *)&currentTime, &currentTimeTm);
-
-    if (opennedTaps >= userData.setting.maxTaps || !openArea(planTime.area, currentTimeTm, planTime.plan))
-    {
-        return false;
-    }
-
-    plan.lastTime.year = area.openTime.year;
-    plan.lastTime.month = area.openTime.month;
-    plan.lastTime.day = area.openTime.day;
-
-    firebaseHandler.updatePlanStartTime(plan, planTime.area, planTime.plan);
-    return true;
-}
-
-bool IrrigationManager::stopPlan(const PlanTime &planTime)
-{
-    UserData::Area &area = userData.areas[planTime.area];
-    area.activePlan = -1;
-    if (!area.manualOpen)
-    {
-        closeArea(planTime.area);
+        buildQueue();
+        firebaseInit = true;
     }
     return true;
 }
@@ -129,17 +81,7 @@ void IrrigationManager::buildQueue()
     // if there was another queue -> free is memory
     delete plansQueue;
 
-    init();
-
-    // count plans
-    uint8 plansLen = 0;
-    for (uint8 i = 0; i < userData.areasLen; i++)
-    {
-        plansLen += userData.areas[i].plansLen;
-    }
-
-    plansQueue = new PeriorityQueue<PlanTime, PlanTime::Update &>(
-        plansLen,
+    plansQueue = new PeriorityQueue<PlanTime, PlanTime::Update &, MAX_TOTAL_PLANS>(
         [](PlanTime *planTime1, PlanTime *planTime2) -> bool
         { return planTime1->nextTime < planTime2->nextTime; },
         [](PlanTime *planTime, PlanTime::Update &update)
@@ -149,17 +91,66 @@ void IrrigationManager::buildQueue()
     time_t currentTime;
     currentTime = network->getNTPDate();
 
-    for (uint8 i = 0; i < userData.areasLen; i++)
+    for (uint8 areaId = 0; areaId < MAX_AREAS; areaId++)
     {
-        for (uint8 j = 0; j < userData.areas[i].plansLen; j++)
+        if (areas[areaId])
         {
-            plansQueue->emplaceBack(calculateNextPlanTime(userData.areas[i].plans[j], currentTime), i, j, false);
+            for (uint8 planId = 0; planId < MAX_PLANS_IN_AREA; planId++)
+            {
+                if (areas[areaId]->plans[planId])
+                {
+                    plansQueue->emplaceBack(calculateNextPlanTime(*areas[areaId]->plans[planId], currentTime), areaId, planId, false);
+                }
+            }
         }
     }
     plansQueue->buildQueue();
 }
 
-time_t IrrigationManager::calculateNextPlanTime(UserData::Plan &plan, time_t currentTime)
+void IrrigationManager::addToQueue(uint8 areaId, uint8 planId)
+{
+    if (plansQueue)
+    {
+        plansQueue->emplaceBackQueue(calculateNextPlanTime(*areas[areaId]->plans[planId], network->getNTPDate(setting.UTC)), areaId, planId, false);
+    }
+}
+
+void IrrigationManager::deleteFromQueue(uint8 areaId, uint8 planId)
+{
+    if (plansQueue)
+    {
+        PlanTime::Update update = {.nextTime = 0};
+        PlanTime *planTime = plansQueue->deleteQueue([areaId, planId](PlanTime *plan) -> bool
+                                                     { return plan->areaId == areaId && plan->planId == planId; },
+                                                     update);
+        if (planTime->isOpen)
+        {
+            areas[areaId]->closePlan(planId);
+        }
+    }
+}
+
+void IrrigationManager::increasOpennedTaps()
+{
+    opennedTaps++;
+}
+
+void IrrigationManager::decreasOpennedTaps()
+{
+    opennedTaps--;
+}
+
+bool IrrigationManager::freeTap() const
+{
+    return opennedTaps < setting.maxTaps;
+}
+
+bool IrrigationManager::isOpennedTaps() const
+{
+    return !!opennedTaps;
+}
+
+time_t IrrigationManager::calculateNextPlanTime(Plan &plan, time_t currentTime)
 {
     time_t nextTime;
     struct tm currentTimeTm, lastTimeTm;
@@ -177,10 +168,10 @@ time_t IrrigationManager::calculateNextPlanTime(UserData::Plan &plan, time_t cur
 
     switch (plan.repeatMethod)
     {
-    case UserData::UserData::Plan::REPEAT_METHOD_DAILY:
-        daysOffset = plan.repaet;
+    case Plan::REPEAT_METHOD_DAILY:
+        daysOffset = plan.repeat;
         break;
-    case UserData::Plan::REPEAT_METHOD_WEEKLY:
+    case Plan::REPEAT_METHOD_WEEKLY:
         // if (!userData.areas[i].plans[j].repaet)
         // {
         //     // error
@@ -195,13 +186,13 @@ time_t IrrigationManager::calculateNextPlanTime(UserData::Plan &plan, time_t cur
         }
         for (daysOffset = 0; daysOffset < 7; daysOffset++, nextWeekDay = (nextWeekDay + 1) % 7)
         {
-            if (IS_BIT_SET(plan.repaet, nextWeekDay))
+            if (IS_BIT_SET(plan.repeat, nextWeekDay))
             {
                 break;
             }
         }
         break;
-    case UserData::Plan::REPEAT_METHOD_NO_REPEAT:
+    case Plan::REPEAT_METHOD_NO_REPEAT:
         daysOffset = 0;
         break;
     default:
@@ -214,34 +205,12 @@ time_t IrrigationManager::calculateNextPlanTime(UserData::Plan &plan, time_t cur
     return nextTime;
 }
 
-IrrigationManager::IrrigationManager(Network *network, ConfigData &configData)
-    : userData(UserData::getInstance()),
-      firebaseHandler(FirebaseHandler::getInstance(configData))
-{
-    this->network = network;
-    plansQueue = nullptr;
-    opennedTaps = 0;
-    defaultDelay = 0;
-    nextReading = 0;
-}
-
-IrrigationManager::~IrrigationManager()
-{
-    delete plansQueue;
-}
-
-bool IrrigationManager::isOpennedTaps() const
-{
-    return !!opennedTaps;
-}
-
 time_t IrrigationManager::scanForNext()
 {
-    time_t currentTime = network->getNTPDate();
-    if (nextReading < currentTime && firebaseHandler.readUserData(userData))
+    time_t currentTime = network->getNTPDate(setting.UTC);
+    if (nextReading < currentTime && getFromFirebase())
     {
-        buildQueue();
-        nextReading = currentTime + updateMethodDelaySecounds[userData.setting.updateMethod];
+        nextReading = currentTime + updateMethodDelaySecounds[setting.updateMethod];
     }
 
     const PlanTime *nextPlan = plansQueue->getNext();
@@ -251,45 +220,50 @@ time_t IrrigationManager::scanForNext()
         return nextReading;
     }
 
+    currentTime = network->getNTPDate(setting.UTC);
     while (nextPlan->nextTime <= currentTime)
     {
         PlanTime::Update update;
+        Area &area = *areas[nextPlan->areaId];
+        Plan &plan = *areas[nextPlan->areaId]->plans[nextPlan->planId];
 
         if (nextPlan->isOpen)
         {
-            stopPlan(*nextPlan);
-            // one time plan
-            if (userData.areas[nextPlan->area].plans[nextPlan->plan].repeatMethod == UserData::Plan::REPEAT_METHOD_NO_REPEAT)
+            area.closePlan(nextPlan->planId);
+            //         // one time plan
+            if (plan.repeatMethod == Plan::REPEAT_METHOD_NO_REPEAT)
             {
                 plansQueue->removeNext();
+                area.deletePlan(nextPlan->planId, false);
             }
             else
             {
                 update.isOpen = false;
-                update.nextTime = calculateNextPlanTime(userData.areas[nextPlan->area].plans[nextPlan->plan], currentTime);
+                update.nextTime = calculateNextPlanTime(plan, currentTime);
                 plansQueue->updateNext(update);
             }
         }
         else
         {
-            startPlan(*nextPlan, currentTime);
+            DEBUG_MODE_PRINT_NAMES_VALUES(nextPlan->planId);
+            area.openPlan(nextPlan->planId, currentTime);
             update.isOpen = true;
-            update.nextTime = currentTime + MINUTES_TO_SECOUNDS(userData.areas[nextPlan->area].plans[nextPlan->plan].duration);
+            update.nextTime = currentTime + MINUTES_TO_SECOUNDS(plan.duration);
             plansQueue->updateNext(update);
         }
     }
 
-#if DEBUG_MODE
-    struct tm delaySecTm;
-    const char *wday[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-    for (int i = 0; i < plansQueue->getHeapLen(); i++)
-    {
-        const PlanTime *planTime = plansQueue->getHeap()[i];
-        gmtime_r((time_t *)&planTime->nextTime, &delaySecTm);
-        DEBUG_MODE_PRINT_VALUES("i=", i, ", area=", planTime->area, ", plan=", planTime->plan, ", isOpen=", planTime->isOpen);
-        DEBUG_MODE_SERIAL_PRINTF("[d.m.y h:m:s]=[%d.%d.%d %d:%d:%d] week day=%s\n", delaySecTm.tm_mday, delaySecTm.tm_mon + 1, delaySecTm.tm_year + 1900, delaySecTm.tm_hour, delaySecTm.tm_min, delaySecTm.tm_sec, wday[delaySecTm.tm_wday]);
-    }
-#endif
+    // #if DEBUG_MODE
+    //     struct tm delaySecTm;
+    //     const char *wday[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    //     for (int i = 0; i < plansQueue->getHeapLen(); i++)
+    //     {
+    //         const PlanTime *planTime = plansQueue->getHeap()[i];
+    //         gmtime_r((time_t *)&planTime->nextTime, &delaySecTm);
+    //         DEBUG_MODE_PRINT_VALUES("i=", i, ", area=", planTime->areaId, ", plan=", planTime->planId, ", isOpen=", planTime->isOpen);
+    //         DEBUG_MODE_SERIAL_PRINTF("[d.m.y h:m:s]=[%d.%d.%d %d:%d:%d] week day=%s\n", delaySecTm.tm_mday, delaySecTm.tm_mon + 1, delaySecTm.tm_year + 1900, delaySecTm.tm_hour, delaySecTm.tm_min, delaySecTm.tm_sec, wday[delaySecTm.tm_wday]);
+    //     }
+    // #endif
 
     return min(plansQueue->getNext()->nextTime, nextReading) - currentTime;
 }

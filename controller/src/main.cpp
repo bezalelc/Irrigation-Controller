@@ -3,18 +3,21 @@
 
 #include <Arduino.h>
 #include <ctime>
+#include "irrigationManager.hpp"
 #include "debugUtils.hpp"
-#include "userData.hpp"
 #include "configData.hpp"
 #include "network.hpp"
 #include "firebaseHandler.hpp"
-#include "irrigationManager.hpp"
 
 // delay for update firebase
-#define DELAY 10000U
+#define DELAY 2000U
+
+#if DEBUG_MODE
+char *stackStart;
+#endif
 
 ConfigData configData;
-UserData *userData;
+// UserData *userData;
 Network *network;
 FirebaseHandler *firebaseHandler;
 IrrigationManager *irrigationManager;
@@ -24,12 +27,16 @@ void restartConnection();
 
 void setup()
 {
+#if DEBUG_MODE
+  char stack;
+  stackStart = &stack;
+#endif // DEBUG_MODE
+
   DEBUG_MODE_SERIAL_BEGIN;
 
-  userData = &UserData::getInstance();
   network = &Network::getInstance(configData);
   firebaseHandler = &FirebaseHandler::getInstance(configData);
-  irrigationManager = new IrrigationManager(network, configData);
+  irrigationManager = new IrrigationManager(network, *firebaseHandler);
 
   if (!network->getConfigMode())
   {
