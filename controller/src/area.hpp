@@ -31,7 +31,7 @@ public:
 
     void update(const JsonObject &jsonArea, time_t currentTime);
 
-    bool openPlan(time_t currentTime, uint8 planId);
+    bool openPlan(time_t currentTime, int8 planId);
     bool closePlan(uint8 planId);
     void deletePlan(uint8 planId, bool deleteQueue = false);
 

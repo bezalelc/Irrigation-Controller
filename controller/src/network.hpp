@@ -1,11 +1,18 @@
 #if defined(ARDUINO) && !defined(NETWORKN_HPP)
 #define NETWORKN_HPP
 
+#ifdef ESP32
+#include <WiFi.h>
+// // #include <WebServer.h>
+#include <ESP32WebServer.h>
+#elif ESP8266
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#endif
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <ctime>
+#include "utils.h"
 #include "configData.hpp"
 
 class Network
@@ -28,7 +35,13 @@ public:
     // }CONFIG_MODE;
 
 private:
-    ESP8266WebServer server;
+#ifdef ESP32
+    //     WebServer
+    ESP32WebServer
+#elif ESP8266
+    ESP8266WebServer
+#endif
+        server;
     ConfigData &configData;
     time_t ntpTime;
 

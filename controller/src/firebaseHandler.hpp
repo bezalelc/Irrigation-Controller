@@ -3,6 +3,7 @@
 
 #include <Firebase_ESP_Client.h>
 #include <ArduinoJson.h>
+#include "utils.h"
 #include "configData.hpp"
 
 #define JSON_MAX_SIZE 2049
@@ -31,13 +32,14 @@ private:
 
     FirebaseHandler(const ConfigData &configData);
 
-    template <typename... Args>
-    inline const char *getPath(const Args &...args)
-    {
-        String path = databasePath;
-        (path += ... += String(args));
-        return path.c_str();
-    }
+    // template <typename... Args>
+    // inline const char *getPath(const Args &...args)
+    // {
+    //     String path = databasePath;
+    //     (path += ... += String(args));
+    //     return path.c_str();
+    // }
+    
     // template <typename... Args>
     // const char *getPath(Args... args)
     // {

@@ -2,6 +2,7 @@
 #define TAP_ADAPTAER_HPP
 
 #include <Arduino.h>
+#include "utils.h"
 
 class TapAdapter
 {

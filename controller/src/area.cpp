@@ -15,7 +15,9 @@ Area::Area(uint8 id, const JsonObject &jsonArea, IrrigationManager &irrigationMa
     manualOpen = jsonArea["manualOpen"];
     fertilizer = jsonArea["fertilizer"];
 
-    sscanf(jsonArea["openTime"], "%hhu.%hhu.%hhu %hhu:%hhu:%hhu",
+    const char *openTimeStr = jsonArea["openTime"] | "1.1.23 0:0:0";
+
+    sscanf(openTimeStr, "%hhu.%hhu.%hhu %hhu:%hhu:%hhu",
            &openTime.day, &openTime.month, &openTime.year,
            &openTime.hour, &openTime.minute, &openTime.secound);
 
@@ -76,7 +78,7 @@ void Area::update(const JsonObject &jsonArea, time_t currentTime)
     }
     fertilizer = jsonArea["fertilizer"] | fertilizer;
 
-    if (jsonArea.containsKey("openTime"))
+    if (jsonArea.containsKey("openTime") && jsonArea["openTime"])
     {
         sscanf(jsonArea["openTime"], "%hhu.%hhu.%hhu %hhu:%hhu:%hhu",
                &openTime.day, &openTime.month, &openTime.year,
@@ -167,9 +169,9 @@ bool Area::closePlan(uint8 planId)
     return true;
 }
 
-bool Area::openPlan(time_t currentTime, uint8 planId)
+bool Area::openPlan(time_t currentTime, int8 planId)
 {
-    if (planId == -1 || close || activePlan != -1 || !irrigationManager.freeTap())
+    if (close || activePlan != -1 || !irrigationManager.freeTap())
     {
         // params error
         return false;
@@ -178,9 +180,12 @@ bool Area::openPlan(time_t currentTime, uint8 planId)
     struct tm currentTimeTm;
     gmtime_r((time_t *)&currentTime, &currentTimeTm);
 
-    activePlan = (int8)planId;
+    activePlan = planId;
     DEBUG_MODE_PRINT_NAMES_VALUES(planId, activePlan);
     plans[planId]->start(currentTimeTm.tm_year - 100, currentTimeTm.tm_mon + 1, currentTimeTm.tm_mday);
+    char lastTimeBuff[LAST_TIME_MAX_LEN];
+    plans[activePlan]->getLastTimeStr(lastTimeBuff);
+    firebaseHandler.updatePlanLastTime(id, activePlan, lastTimeBuff);
 
     if (!isOpen && irrigationManager.freeTap())
     {
@@ -217,6 +222,9 @@ void Area::openTap(time_t currentTime)
     openTime.hour = currentTimeTm.tm_hour;
     openTime.minute = currentTimeTm.tm_min;
     openTime.secound = currentTimeTm.tm_sec;
+
+    DEBUG_MODE_PRINT_NAMES_VALUES(openTime.year, openTime.month, openTime.day, openTime.hour, openTime.minute, openTime.secound);
+    DEBUG_MODE_PRINT_NAMES_VALUES(currentTimeTm.tm_year, currentTimeTm.tm_mon, currentTimeTm.tm_mday, currentTimeTm.tm_sec);
 
     isOpen = true;
 
@@ -269,9 +277,10 @@ void Area::updateFirebase(bool addNew)
     snprintf(timeBuffer, OPEN_TIME_MAX_LEN, "%02d.%02d.%02d %02d:%02d:%02d",
              openTime.day, openTime.month, openTime.year,
              openTime.hour, openTime.minute, openTime.secound);
-    // areaJson["openTime"] = timeBuffer;
+    areaJson["openTime"] = timeBuffer;
 
-    DEBUG_MODE_PRINT_NAMES_VALUES(activePlan, isOpen, close);
+    DEBUG_MODE_PRINT_NAMES_VALUES(activePlan, isOpen, close, timeBuffer);
+    DEBUG_MODE_PRINT_NAMES_VALUES(openTime.year, openTime.month, openTime.day, openTime.hour, openTime.minute, openTime.secound);
 
     char jsonBuffer[AREA_JSON_MAX_SIZE];
     serializeJson(areaJson, jsonBuffer, AREA_JSON_MAX_SIZE);

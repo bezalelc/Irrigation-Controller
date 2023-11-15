@@ -1,10 +1,13 @@
-#if defined(ARDUINO) && !defined(MAIN_CPP)
+#ifndef MAIN_CPP
 #define MAIN_CPP
+
+#ifdef ARDUINO
 
 #include <Arduino.h>
 #include <ctime>
-#include "irrigationManager.hpp"
+#include "utils.h"
 #include "debugUtils.hpp"
+#include "irrigationManager.hpp"
 #include "configData.hpp"
 #include "network.hpp"
 #include "firebaseHandler.hpp"
@@ -17,7 +20,6 @@ char *stackStart;
 #endif
 
 ConfigData configData;
-// UserData *userData;
 Network *network;
 FirebaseHandler *firebaseHandler;
 IrrigationManager *irrigationManager;
@@ -33,6 +35,8 @@ void setup()
 #endif // DEBUG_MODE
 
   DEBUG_MODE_SERIAL_BEGIN;
+
+  configData.init();
 
   network = &Network::getInstance(configData);
   firebaseHandler = &FirebaseHandler::getInstance(configData);
@@ -56,8 +60,9 @@ void loop()
     delaySec = irrigationManager->scanForNext();
   }
 
-  DEBUG_MODE_PRINT_MEMORY_USAGE;
-  delay(DELAY);
+  // DEBUG_MODE_PRINT_MEMORY_USAGE;
+  DEBUG_MODE_PRINT_NAMES_VALUES(delaySec);
+  delay(SECOUNDS_TO_MILLIS(delaySec) + DELAY);
 }
 
 void restartConnection()
@@ -66,9 +71,10 @@ void restartConnection()
   firebaseHandler->begin();
 }
 
-#elif !defined(ARDUINO) && !defined(MAIN_CPP)
+#else  // for native platform
 int main()
 {
   return 0;
 }
-#endif // defined(ARDUINO) && !defined(MAIN_CPP)
+#endif // ARDUINO
+#endif // MAIN_CPP

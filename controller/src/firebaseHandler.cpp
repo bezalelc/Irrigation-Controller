@@ -67,7 +67,7 @@ void FirebaseHandler::begin()
         DEBUG_MODE_SERIAL_PRINT('.');
         delay(1000);
     }
-    DEBUG_MODE_SERIAL_PRINTLN(" Connected!");
+    DEBUG_MODE_SERIAL_PRINTLN(" Finish!");
     String userId = firebaseAuth.token.uid.c_str();
     // Update database path
     databasePath = FIREBASE_MAIN_PATH + userId;
@@ -80,7 +80,6 @@ bool FirebaseHandler::readUserData(DynamicJsonDocument &doc, bool update)
         DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
         return false;
     }
-
     if (!Firebase.RTDB.getJSON(&firebaseData, databasePath))
     {
         DEBUG_MODE_PRINT_VALUES(firebaseData.errorReason().c_str());
@@ -127,7 +126,7 @@ bool FirebaseHandler::updateNode(const char *nodePath, const char *jsonBuffer)
     FirebaseJson firebaseJson;
     firebaseJson.setJsonData(jsonBuffer);
 
-    if (Firebase.RTDB.updateNode(&firebaseData, nodePath, &firebaseJson))
+    if (!Firebase.RTDB.updateNode(&firebaseData, nodePath, &firebaseJson))
     {
         DEBUG_MODE_PRINT_VALUES(firebaseData.errorReason().c_str());
         return false;
@@ -143,8 +142,9 @@ bool FirebaseHandler::updateStr(const char *strPath, const char *str)
         DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
         return false;
     }
+    DEBUG_MODE_PRINT_NAMES_VALUES(strPath, str);
 
-    if (Firebase.RTDB.setString(&firebaseData, strPath, str))
+    if (!Firebase.RTDB.setString(&firebaseData, strPath, str))
     {
         DEBUG_MODE_PRINT_VALUES(firebaseData.errorReason().c_str());
         return false;
@@ -153,89 +153,9 @@ bool FirebaseHandler::updateStr(const char *strPath, const char *str)
     return true;
 }
 
-// bool FirebaseHandler::updatePlanStartTime(const Plan &plan, uint8 areaId, uint8 planId)
-// {
-//     if (!Firebase.ready())
-//     {
-//         DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
-//         return false;
-//     }
-
-//     char timeBuffer[LAST_TIME_MAX_LEN];
-//     snprintf(timeBuffer, LAST_TIME_MAX_LEN, "%02d.%02d.%02d", plan.getLastTime().day, plan.getLastTime().month, plan.getLastTime().year);
-
-//     if (Firebase.RTDB.setString(&firebaseData, databasePath + "/areas/" + areaId + "/plans/" + planId + FIREBASE_LAST_TIME_KEY, timeBuffer))
-//     {
-//         return true;
-//     }
-
-//     return false;
-// }
-
-// bool FirebaseHandler::updateOpenArea(const Area &area)
-// {
-//     if (!Firebase.ready())
-//     {
-//         DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
-//         return false;
-//     }
-
-//     StaticJsonDocument<AREA_JSON_MAX_SIZE> areaJson;
-//     char timeBuffer[OPEN_TIME_MAX_LEN];
-
-//     areaJson["activePlan"] = area.getActivePlan();
-//     areaJson["close"] = false;
-//     areaJson["isOpen"] = area.getIsOpen();
-//     // areaJson["manualOpen"] = area.manualOpen;
-//     snprintf(timeBuffer, OPEN_TIME_MAX_LEN, "%02d.%02d.%02d %02d:%02d:%02d",
-//              area.getOpenTime().day, area.getOpenTime().month, area.getOpenTime().year,
-//              area.getOpenTime().hour, area.getOpenTime().minute, area.getOpenTime().secound);
-//     areaJson["openTime"] = timeBuffer;
-
-//     char jsonBuffer[AREA_JSON_MAX_SIZE];
-//     serializeJson(areaJson, jsonBuffer, AREA_JSON_MAX_SIZE);
-
-//     FirebaseJson json;
-//     json.setJsonData(jsonBuffer);
-//     if (Firebase.RTDB.updateNode(&firebaseData, databasePath + "/areas/" + area.getId() + "/", &json))
-//     {
-//         return true;
-//     }
-
-//     return false;
-// }
-
-// bool FirebaseHandler::updateCloseArea(uint8 areaId)
-// {
-//     if (!Firebase.ready())
-//     {
-//         DEBUG_MODE_PRINT_VALUES("Firebase.ready()=false");
-//         return false;
-//     }
-
-//     StaticJsonDocument<AREA_JSON_MAX_SIZE> areaJson;
-//     char timeBuffer[OPEN_TIME_MAX_LEN];
-
-//     areaJson["activePlan"] = -1;
-//     areaJson["close"] = false;
-//     areaJson["isOpen"] = false;
-//     areaJson["manualOpen"] = false;
-
-//     char jsonBuffer[AREA_JSON_MAX_SIZE];
-//     serializeJson(areaJson, jsonBuffer, AREA_JSON_MAX_SIZE);
-
-//     FirebaseJson json;
-//     json.setJsonData(jsonBuffer);
-//     if (Firebase.RTDB.updateNode(&firebaseData, databasePath + "/areas/" + areaId + "/", &json))
-//     {
-//         return true;
-//     }
-
-//     return false;
-// }
-
 bool FirebaseHandler::updateArea(uint8 areaId, const char *jsonBuff)
 {
+    DEBUG_MODE_PRINT_VALUES("line");
     return updateNode((databasePath + FIREBASE_AREAS_PATH + "id" + areaId).c_str(), jsonBuff);
 }
 
@@ -246,7 +166,8 @@ bool FirebaseHandler::deleteArea(uint8 areaId)
 
 bool FirebaseHandler::updatePlanLastTime(uint8 areaId, uint8 planId, const char *lastTime)
 {
-    String path = databasePath + FIREBASE_AREAS_PATH + areaId + FIREBASE_PLANS_PATH + planId + FIREBASE_LAST_TIME_KEY;
+    DEBUG_MODE_PRINT_VALUES(lastTime);
+    String path = databasePath + FIREBASE_AREAS_PATH + "id" + areaId + FIREBASE_PLANS_PATH + "id" + planId + FIREBASE_LAST_TIME_KEY;
     return updateStr(path.c_str(), lastTime);
 }
 

@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+constexpr uint8 LAST_TIME_MAX_LEN = 9;
+
 class Plan
 {
 public:
@@ -63,6 +65,7 @@ public:
     {
         return duration;
     }
+    void getLastTimeStr(char lastTimeBuff[LAST_TIME_MAX_LEN]) const;
 
 private:
     LastTimeDate lastTime;

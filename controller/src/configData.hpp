@@ -36,6 +36,7 @@ public:
     } CONFIG_DATA_TYPE;
 
     ConfigData();
+    void init();
     static ConfigData &getInstance();
     void updateConfig(CONFIG_DATA_TYPE dataType, const String buff);
     const char &getUsername() const;

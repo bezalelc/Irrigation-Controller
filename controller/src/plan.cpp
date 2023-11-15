@@ -99,4 +99,9 @@ bool Plan::start(uint8 year, uint8 month, uint8 day)
     return true;
 }
 
+void Plan::getLastTimeStr(char lastTimeBuff[LAST_TIME_MAX_LEN]) const
+{
+    snprintf(lastTimeBuff, LAST_TIME_MAX_LEN, "%hhu.%hhu.%hhu", lastTime.day, lastTime.month, lastTime.year);
+}
+
 #endif // ARDUINO

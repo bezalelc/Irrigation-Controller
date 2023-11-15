@@ -2,9 +2,10 @@
 
 #include "network.hpp"
 #include "debugUtils.hpp"
+#include "hal.h"
 
 #define MAX_CONNECTION 4
-#define CONFIG_INPUT_PIN D2
+// #define CONFIG_INPUT_PIN D2
 #define SERVER_PORT 80
 // TODO: define IP 192.168.4.1
 
@@ -106,6 +107,7 @@ void Network::connectToWifi()
     DEBUG_MODE_PRINT_NAMES_VALUES(configData.wifiSSID, configData.wifiPassword);
     while (!configMode && WiFi.status() != WL_CONNECTED)
     {
+        // DEBUG_MODE_PRINT_NAMES_VALUES(configData.wifiSSID, configData.wifiPassword);
         DEBUG_MODE_SERIAL_PRINT(".");
         delay(300);
     }

@@ -47,7 +47,6 @@ bool IrrigationManager::getFromFirebase()
         {
             uint8 areaId = ((String)(jsonArea.key().c_str())).substring(2).toInt();
             const JsonObject jsonObjectArea = (const JsonObject)jsonArea.value();
-
             if (jsonObjectArea)
             {
                 if (areas[areaId])
@@ -71,8 +70,10 @@ bool IrrigationManager::getFromFirebase()
     if (!firebaseInit)
     {
         buildQueue();
+
         firebaseInit = true;
     }
+
     return true;
 }
 
@@ -230,7 +231,7 @@ time_t IrrigationManager::scanForNext()
         if (nextPlan->isOpen)
         {
             area.closePlan(nextPlan->planId);
-            //         // one time plan
+            // one time plan
             if (plan.repeatMethod == Plan::REPEAT_METHOD_NO_REPEAT)
             {
                 plansQueue->removeNext();
@@ -245,27 +246,26 @@ time_t IrrigationManager::scanForNext()
         }
         else
         {
-            DEBUG_MODE_PRINT_NAMES_VALUES(nextPlan->planId);
-            area.openPlan(nextPlan->planId, currentTime);
+            area.openPlan(currentTime, nextPlan->planId);
             update.isOpen = true;
             update.nextTime = currentTime + MINUTES_TO_SECOUNDS(plan.duration);
             plansQueue->updateNext(update);
         }
     }
 
-    // #if DEBUG_MODE
-    //     struct tm delaySecTm;
-    //     const char *wday[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-    //     for (int i = 0; i < plansQueue->getHeapLen(); i++)
-    //     {
-    //         const PlanTime *planTime = plansQueue->getHeap()[i];
-    //         gmtime_r((time_t *)&planTime->nextTime, &delaySecTm);
-    //         DEBUG_MODE_PRINT_VALUES("i=", i, ", area=", planTime->areaId, ", plan=", planTime->planId, ", isOpen=", planTime->isOpen);
-    //         DEBUG_MODE_SERIAL_PRINTF("[d.m.y h:m:s]=[%d.%d.%d %d:%d:%d] week day=%s\n", delaySecTm.tm_mday, delaySecTm.tm_mon + 1, delaySecTm.tm_year + 1900, delaySecTm.tm_hour, delaySecTm.tm_min, delaySecTm.tm_sec, wday[delaySecTm.tm_wday]);
-    //     }
-    // #endif
+// #if DEBUG_MODE
+//     struct tm delaySecTm;
+//     const char *wday[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+//     for (int i = 0; i < plansQueue->getHeapLen(); i++)
+//     {
+//         const PlanTime *planTime = plansQueue->getHeap()[i];
+//         gmtime_r((time_t *)&planTime->nextTime, &delaySecTm);
+//         DEBUG_MODE_PRINT_VALUES("i=", i, ", area=", planTime->areaId, ", plan=", planTime->planId, ", isOpen=", planTime->isOpen);
+//         DEBUG_MODE_SERIAL_PRINTF("[d.m.y h:m:s]=[%d.%d.%d %d:%d:%d] week day=%s\n", delaySecTm.tm_mday, delaySecTm.tm_mon + 1, delaySecTm.tm_year + 1900, delaySecTm.tm_hour, delaySecTm.tm_min, delaySecTm.tm_sec, wday[delaySecTm.tm_wday]);
+//     }
+// #endif
 
-    return min(plansQueue->getNext()->nextTime, nextReading) - currentTime;
+    return max(min(plansQueue->getNext()->nextTime, nextReading) - network->getNTPDate(setting.UTC), (time_t)0);
 }
 
 #endif // ARDUINO
